@@ -1,0 +1,2 @@
+# miori.dev
+my blog
