@@ -1,14 +1,13 @@
-import './globals.css'
+import '@/globals.css'
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { Navbar } from './components/nav'
+import { Navbar } from '@/components/nav'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import Footer from './components/footer'
-import { baseUrl } from './sitemap'
-import Script from 'next/script'
-import { themeInitScript } from './lib/themeScript'
+import Footer from '@/components/footer'
+import { baseUrl } from '@/sitemap'
+import { getThemeScript } from '@/lib/getThemeScript'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -55,9 +54,12 @@ export default function RootLayout({
       )}
     >
       <head>
-        <Script id="theme-script" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
+        <script
+          key="theme-script"
+          dangerouslySetInnerHTML={{
+            __html: getThemeScript(),
+          }}
+        />
       </head>
       <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
         <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
