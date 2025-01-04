@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 type ThemeMode = 'light' | 'dark'
 
@@ -11,8 +11,13 @@ function updateDocumentClass(mode: ThemeMode) {
   document.documentElement.classList.toggle('dark', mode === 'dark')
 }
 
-export default function useThemeMode() {
+export default function useSetThemeMode() {
   const [mode, setMode] = useState<ThemeMode>('light')
+
+  const applyTheme = useCallback((newTheme: ThemeMode) => {
+    setMode(newTheme)
+    updateDocumentClass(newTheme)
+  }, [])
 
   useEffect(() => {
     const initializeTheme = () => {
@@ -20,15 +25,13 @@ export default function useThemeMode() {
       const prefersDark = window.matchMedia(DARK_MODE_MEDIA_QUERY).matches
       const initialMode = savedMode || (prefersDark ? 'dark' : 'light')
 
-      setMode(initialMode)
-      updateDocumentClass(initialMode)
+      applyTheme(initialMode)
     }
 
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
       if (!localStorage.getItem(STORAGE_KEY)) {
         const newMode = e.matches ? 'dark' : 'light'
-        setMode(newMode)
-        updateDocumentClass(newMode)
+        applyTheme(newMode)
       }
     }
 
@@ -39,13 +42,12 @@ export default function useThemeMode() {
 
     return () =>
       mediaQuery.removeEventListener('change', handleSystemThemeChange)
-  }, [])
+  }, [applyTheme])
 
   const toggleMode = () => {
     const newMode = mode === 'light' ? 'dark' : 'light'
-    setMode(newMode)
+    applyTheme(newMode)
     localStorage.setItem(STORAGE_KEY, newMode)
-    updateDocumentClass(newMode)
   }
 
   return { mode, toggleMode }

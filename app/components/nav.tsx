@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import useThemeMode from '@/hooks/useThemeMode'
+import useSetThemeMode from '@/hooks/useSetThemeMode'
 import { Switch } from '@/components/ui/switch'
 import { SunMedium, MoonStar } from 'lucide-react'
 
@@ -15,7 +15,7 @@ const navItems = {
 }
 
 export function Navbar() {
-  const { mode, toggleMode } = useThemeMode()
+  const { mode, toggleMode } = useSetThemeMode()
   return (
     <aside className="mb-16 tracking-tight">
       <div className="lg:sticky lg:top-20">
