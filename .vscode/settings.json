@@ -1,5 +1,21 @@
 {
-  "markdownlint.config": {
-    "default": false
+  // 저장 시 ESLint 규칙에 따라 코드 수정
+  "editor.codeActionsOnSave": {
+    // ESLint 자동 수정 동작을 명시적으로 설정
+    "source.fixAll.eslint": "explicit",
+    // Prettier 포맷팅도 저장 시 적용
+    "source.fixAll.format":  "explicit",
+  },
+  // ESLint 플러그인 활성화
+  "eslint.enable": true,
+  // Prettier 플러그인 활성화
+  "prettier.enable": true,
+  // JavaScript 파일에서 Prettier를 기본 포맷터로 지정
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // TypeScript 파일에서 Prettier를 기본 포맷터로 지정
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

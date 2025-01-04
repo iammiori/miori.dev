@@ -1,9 +1,10 @@
 'use client'
 
-import Link from 'next/link'
-import useSetThemeMode from '@/hooks/useSetThemeMode'
-import { Switch } from '@/components/ui/switch'
 import { SunMedium, MoonStar } from 'lucide-react'
+import Link from 'next/link'
+
+import { Switch } from '@/components/ui/switch'
+import useSetThemeMode from '@/hooks/useSetThemeMode'
 
 const navItems = {
   '/': {
