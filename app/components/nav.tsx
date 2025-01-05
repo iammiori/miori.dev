@@ -8,10 +8,10 @@ import useSetThemeMode from '@/hooks/useSetThemeMode'
 
 const navItems = {
   '/': {
-    name: 'home',
-  },
-  '/blog': {
     name: 'blog',
+  },
+  '/about': {
+    name: 'about',
   },
 }
 
