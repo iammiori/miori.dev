@@ -18,7 +18,7 @@ const navItems = {
 export function Navbar() {
   const { mode, toggleMode } = useSetThemeMode()
   return (
-    <aside className="mb-16 tracking-tight">
+    <aside className="mb-2 tracking-tight">
       <div className="lg:sticky lg:top-20">
         <nav className="flex justify-between items-center" id="nav">
           <div className="flex space-x-0">
