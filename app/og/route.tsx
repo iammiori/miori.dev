@@ -1,8 +1,10 @@
 import { ImageResponse } from 'next/og'
 
+import { siteConfig } from '@/config/site'
+
 export function GET(request: Request) {
   const url = new URL(request.url)
-  const title = url.searchParams.get('title') || 'Next.js Portfolio Starter'
+  const title = url.searchParams.get('title') || siteConfig.title
 
   return new ImageResponse(
     (

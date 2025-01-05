@@ -6,6 +6,8 @@ import { GeistSans } from 'geist/font/sans'
 
 import { baseUrl } from '@/sitemap'
 
+import { siteConfig } from './config/site'
+
 import type { Metadata } from 'next'
 
 import Footer from '@/components/footer'
@@ -14,18 +16,19 @@ import { getThemeScript } from '@/lib/getThemeScript'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
+  applicationName: siteConfig.title,
   title: {
-    default: 'Next.js Portfolio Starter',
-    template: '%s | Next.js Portfolio Starter',
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.title}`,
   },
-  description: 'This is my portfolio.',
+  description: siteConfig.description,
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
-    url: baseUrl,
-    siteName: 'My Portfolio',
-    locale: 'en_US',
     type: 'website',
+    locale: 'ko_KR',
+    url: baseUrl,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    siteName: siteConfig.title,
   },
   robots: {
     index: true,
@@ -39,7 +42,6 @@ export const metadata: Metadata = {
     },
   },
 }
-
 const cx = (...classes) => classes.filter(Boolean).join(' ')
 
 export default function RootLayout({
@@ -49,7 +51,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={cx(
         'text-black bg-white dark:text-white dark:bg-black',
         GeistSans.variable,
@@ -64,11 +66,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-          <Navbar />
-          {children}
-          <Footer />
+      <body>
+        <main className="max-w-2xl mx-auto min-h-screen flex flex-col pt-3 md:pt-6">
+          <div className="flex flex-col flex-1 px-4 sm:px-6 md:px-4">
+            <Navbar />
+            <div className="mt-6 flex-1">{children}</div>
+            <Footer />
+          </div>
           <Analytics />
           <SpeedInsights />
         </main>
