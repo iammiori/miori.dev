@@ -1,6 +1,6 @@
 export interface BlogMetadata {
   title: string
-  publishedAt: Date
+  publishedAt: string
   summary: string
   image?: string
   category?: string
