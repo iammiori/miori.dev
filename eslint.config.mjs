@@ -41,14 +41,17 @@ export default [
       import: eslintPluginImport,
     },
     rules: {
+      'no-unused-vars': 'off',
       // TypeScript 관련 규칙
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
+          args: 'none',
         },
       ],
+
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
