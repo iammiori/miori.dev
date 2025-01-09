@@ -1,8 +1,7 @@
 'use client'
 
-import { useSearchParams, useRouter } from 'next/navigation'
-
 import { CategoryChip } from '@/components/category'
+import { useFilterNavigation } from '@/hooks/useFilterNavigation'
 
 interface Props {
   categories: string[]
@@ -10,17 +9,16 @@ interface Props {
 }
 
 export default function BlogCategories({ categories, className }: Props) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedCategory = searchParams.get('category')
+  const { updateFilter, currentFilters } = useFilterNavigation()
+  const selectedCategory = currentFilters.get('category')
 
   const handleSelect = (category: string) => {
     if (category === selectedCategory) {
-      router.push('/')
+      updateFilter('category')
       return
     }
 
-    router.push(`?category=${encodeURIComponent(category)}`)
+    updateFilter('category', category)
   }
 
   return (
