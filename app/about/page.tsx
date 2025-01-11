@@ -1,4 +1,4 @@
-import { BlogPosts } from '@/components/posts'
+import { BlogPosts } from '@/(blog)/components/BlogPost'
 
 export default function Page() {
   return (
