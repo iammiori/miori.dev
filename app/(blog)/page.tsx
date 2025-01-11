@@ -1,6 +1,6 @@
 import BlogCategories from './components/Categories'
 
-import { BlogPosts } from '@/components/posts'
+import { BlogPosts } from '@/(blog)/components/BlogPost'
 
 export const metadata = {
   title: 'Blog',
