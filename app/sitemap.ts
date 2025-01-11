@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
 
-import { getBlogPosts } from '@/blog/utils'
+import { getBlogPosts } from '@/(blog)/utils'
 
-export const baseUrl = 'https://portfolio-blog-starter.vercel.app'
+export const baseUrl = 'https://techblog.iammiori.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogs = getBlogPosts().map((post) => ({

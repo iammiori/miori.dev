@@ -1,41 +1,58 @@
 import fs from 'fs'
 import path from 'path'
 
-type Metadata = {
-  title: string
-  publishedAt: string
-  summary: string
-  image?: string
-}
+import { BlogMetadata, BlogPost } from '@/types/blog'
 
-function parseFrontmatter(fileContent: string) {
+const parseFrontmatter = (fileContent: string) => {
   const frontmatterRegex = /---\s*([\s\S]*?)\s*---/
   const match = frontmatterRegex.exec(fileContent)
-  const frontMatterBlock = match![1]
+
+  if (!match) {
+    throw new Error('Invalid frontmatter format')
+  }
+
+  const frontMatterBlock = match[1]
   const content = fileContent.replace(frontmatterRegex, '').trim()
   const frontMatterLines = frontMatterBlock.trim().split('\n')
-  const metadata: Partial<Metadata> = {}
+  const metadata: Record<string, string> = {}
 
   frontMatterLines.forEach((line) => {
     const [key, ...valueArr] = line.split(': ')
-    let value = valueArr.join(': ').trim()
-    value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value
+    const value = valueArr
+      .join(': ')
+      .trim()
+      .replace(/^['"](.*)['"]$/, '$1')
+    metadata[key.trim()] = value
   })
 
-  return { metadata: metadata as Metadata, content }
-}
+  const requiredFields = ['title', 'publishedAt'] as const
+  const missingFields = requiredFields.filter((field) => !metadata[field])
 
-function getMDXFiles(dir) {
+  if (missingFields.length > 0) {
+    throw new Error(
+      `Missing required frontmatter fields: ${missingFields.join(', ')}`
+    )
+  }
+
+  const validatedMetadata: BlogMetadata = {
+    title: metadata.title,
+    publishedAt: metadata.publishedAt,
+    summary: metadata.summary,
+    ...(metadata.image && { image: metadata.image }),
+  }
+
+  return { metadata: validatedMetadata, content }
+}
+const getMDXFiles = (dir: string) => {
   return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx')
 }
 
-function readMDXFile(filePath) {
+const readMDXFile = (filePath: string) => {
   const rawContent = fs.readFileSync(filePath, 'utf-8')
   return parseFrontmatter(rawContent)
 }
 
-function getMDXData(dir) {
+const getMDXData = (dir: string) => {
   const mdxFiles = getMDXFiles(dir)
   return mdxFiles.map((file) => {
     const { metadata, content } = readMDXFile(path.join(dir, file))
@@ -50,7 +67,7 @@ function getMDXData(dir) {
 }
 
 export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+  return getMDXData(path.join(process.cwd(), 'app', '(blog)', 'posts'))
 }
 
 export function formatDate(date: string, includeRelative = false) {
@@ -87,4 +104,11 @@ export function formatDate(date: string, includeRelative = false) {
   }
 
   return `${fullDate} (${formattedDate})`
+}
+
+export function sortByDate(a: BlogPost, b: BlogPost) {
+  if (new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)) {
+    return -1
+  }
+  return 1
 }
