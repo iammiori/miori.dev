@@ -22,6 +22,17 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.title}`,
   },
   description: siteConfig.description,
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+      { rel: 'icon', url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/apple-icon.png',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/custom-icon.png',
+    },
+  },
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
