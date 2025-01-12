@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 
+import ScrollRevealContainer from './ScrollRevealContainer'
+
 import { Card } from '@/components/ui/card'
 
 interface Props {
@@ -13,11 +15,7 @@ interface Props {
 
 export function ProfileSection({ name, bio, avatarUrl }: Props) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mb-8"
-    >
+    <ScrollRevealContainer>
       <Card className="p-6 bg-background/80 backdrop-blur-sm dark:bg-gray-900">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <motion.div
@@ -38,18 +36,11 @@ export function ProfileSection({ name, bio, avatarUrl }: Props) {
           </motion.div>
 
           <div className="space-y-4 text-center md:text-left">
-            <motion.h1
-              className="text-2xl font-bold text-foreground"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              {name}
-            </motion.h1>
+            <h1 className="text-2xl font-bold text-foreground">{name}</h1>
             <p className="text-lg text-muted-foreground">{bio}</p>
           </div>
         </div>
       </Card>
-    </motion.div>
+    </ScrollRevealContainer>
   )
 }
