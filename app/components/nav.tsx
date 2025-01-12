@@ -2,9 +2,9 @@
 
 import { SunMedium, MoonStar } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 import { Switch } from '@/components/ui/switch'
+import { useNavigation } from '@/hooks/useNavigation'
 import useSetThemeMode from '@/hooks/useSetThemeMode'
 
 const navItems = {
@@ -18,7 +18,7 @@ const navItems = {
 
 export function Navbar() {
   const { mode, toggleMode } = useSetThemeMode()
-  const pathname = usePathname()
+  const { isNavActive } = useNavigation()
 
   return (
     <aside className="mb-2 tracking-tight">
@@ -26,7 +26,7 @@ export function Navbar() {
         <nav className="flex justify-between items-center" id="nav">
           <div className="flex space-x-0">
             {Object.entries(navItems).map(([path, { name }]) => {
-              const isActive = pathname === path
+              const isActive = isNavActive(path)
 
               return (
                 <Link
