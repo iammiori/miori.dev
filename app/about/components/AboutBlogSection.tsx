@@ -12,10 +12,10 @@ interface Props {
 function BlogContentItem({ icon, content }: Props) {
   return (
     <div className="flex items-center gap-4">
-      <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-600 shrink-0">
+      <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-600/40 shrink-0">
         {icon}
       </div>
-      <p className="text-muted-foreground">{content}</p>
+      <p className="text-muted-foreground dark:text-slate-300">{content}</p>
     </div>
   )
 }
@@ -23,7 +23,7 @@ function BlogContentItem({ icon, content }: Props) {
 export function AboutBlogSection() {
   return (
     <ScrollRevealContainer>
-      <Card className="p-6 bg-background dark:bg-gray-900">
+      <Card className="p-6 bg-background dark:bg-slate-600/20">
         <h2 className="text-xl font-semibold mb-6">여기서는..</h2>
         <div className="space-y-6">
           <BlogContentItem
