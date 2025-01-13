@@ -64,7 +64,7 @@ export default function RootLayout({
     <html
       lang="ko"
       className={cx(
-        'text-black bg-white dark:text-white dark:bg-black',
+        'text-black bg-white dark:text-white dark:bg-gray-900',
         GeistSans.variable,
         GeistMono.variable
       )}
@@ -79,15 +79,21 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <main className="max-w-7xl mx-auto min-h-screen flex flex-col pt-3 md:pt-6">
-          <div className="flex flex-col flex-1 px-4 sm:px-8 md:px-12 lg:px-8">
-            <Navbar />
-            <div className="mt-6 flex-1">{children}</div>
-            <Footer />
-          </div>
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+
+          <main className="flex-1 w-full">
+            <div className="max-w-7xl mx-auto min-h-screen flex flex-col pt-16 md:pt-20">
+              <div className="flex flex-col flex-1 px-4 sm:px-8 md:px-12 lg:px-8">
+                <div className="flex-1">{children}</div>
+                <Footer />
+              </div>
+            </div>
+          </main>
+
           <Analytics />
           <SpeedInsights />
-        </main>
+        </div>
       </body>
     </html>
   )

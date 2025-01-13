@@ -19,12 +19,14 @@ interface Props {
 
 function InsightCard({ icon, title, description }: Props) {
   return (
-    <Card className="p-6 bg-background dark:bg-gray-900 h-full flex flex-col">
-      <div className="p-3 w-fit rounded-full bg-muted dark:bg-slate-600 mb-4">
+    <Card className="p-6 bg-background dark:bg-slate-600/20 h-full flex flex-col">
+      <div className="p-3 w-fit rounded-full bg-muted dark:bg-slate-600/40 mb-4">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground break-keep leading-relaxed mt-auto">
+      <h3 className="text-lg font-semibold mb-2 dark:text-slate-200">
+        {title}
+      </h3>
+      <p className="text-muted-foreground dark:text-slate-300 break-keep leading-relaxed mt-auto">
         {description}
       </p>
     </Card>
