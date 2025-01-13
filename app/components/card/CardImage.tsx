@@ -8,7 +8,7 @@ interface CardImageProps {
 
 export default function CardImage({ src, alt = '' }: CardImageProps) {
   return (
-    <div className="relative aspect-video overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+    <div className="relative aspect-video overflow-hidden bg-neutral-100 dark:bg-slate-600/20">
       {src ? (
         <Image
           src={src}
@@ -19,7 +19,7 @@ export default function CardImage({ src, alt = '' }: CardImageProps) {
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
-          <ImageIcon className="w-8 h-8 text-neutral-400" />
+          <ImageIcon className="w-8 h-8 text-neutral-400 dark:text-slate-400" />
         </div>
       )}
     </div>
