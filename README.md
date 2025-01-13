@@ -38,7 +38,7 @@
 - 📝 MDX 블로그 포스팅 
 - 💅 shadcn/ui 기반 컴포넌트
 - ✨ Framer Motion 스크롤 애니메이션
-- 
+  
 ### 🛠️ Installation & Run
 ```bash
 # 패키지 설치
