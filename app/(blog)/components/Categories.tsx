@@ -1,38 +1,27 @@
 'use client'
+import { BlogTag } from './BlogTag'
 
-import { CategoryChip } from '@/components/category'
 import { useFilterNavigation } from '@/hooks/useFilterNavigation'
+import { getAllCategories, getCategoryLabel, getCategoryIcon } from '@/lib/blog'
 
 interface Props {
-  categories: string[]
   className?: string
 }
 
-export default function BlogCategories({ categories, className }: Props) {
-  const { updateFilter, currentFilters } = useFilterNavigation()
-  const selectedCategory = currentFilters.get('category')
-
-  const handleSelect = (category: string) => {
-    if (category === selectedCategory) {
-      updateFilter('category')
-      return
-    }
-
-    updateFilter('category', category)
-  }
+export default function BlogCategories({ className }: Props) {
+  const { updateFilter, currentFilter } = useFilterNavigation()
+  const categories = getAllCategories()
 
   return (
     <div className={`flex flex-wrap justify-center gap-2 ${className}`}>
       {categories.map((category) => (
-        <CategoryChip.Root
+        <BlogTag
           key={category}
-          category={category}
-          isSelected={category === selectedCategory}
-          onClick={handleSelect}
-        >
-          <CategoryChip.Icon />
-          <CategoryChip.Text>{category}</CategoryChip.Text>
-        </CategoryChip.Root>
+          label={getCategoryLabel(category)}
+          icon={getCategoryIcon(category)}
+          isSelected={category === currentFilter}
+          onClick={() => updateFilter(category)}
+        />
       ))}
     </div>
   )

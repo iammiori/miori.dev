@@ -1,4 +1,4 @@
-import { formatDate } from '@/(blog)/utils'
+import { formatDate } from '@/(blog)/utils/date'
 
 interface CardContentProps {
   title: string

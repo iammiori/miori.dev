@@ -1,4 +1,4 @@
-import { LucideIcon, Shapes } from 'lucide-react'
+import { LucideIcon, Quote, Shapes } from 'lucide-react'
 import {
   Database,
   Binary,
@@ -6,7 +6,6 @@ import {
   Compass,
   Sprout,
   BookOpen,
-  Coffee,
   Layers,
 } from 'lucide-react'
 
@@ -52,6 +51,6 @@ export const CATEGORY_METADATA: Record<BlogCategory, CategoryMetadata> = {
   },
   [BLOG_CATEGORIES.LIFE]: {
     label: 'Life',
-    icon: Coffee,
+    icon: Quote,
   },
 }

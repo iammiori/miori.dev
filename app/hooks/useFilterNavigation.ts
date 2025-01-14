@@ -1,46 +1,29 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 
-interface UseFilterNavigationOptions {
-  replace?: boolean
-}
+import { BLOG_CATEGORIES, BlogCategory } from '@/types/blog'
 
-export const useFilterNavigation = (
-  options: UseFilterNavigationOptions = {}
-) => {
-  const { replace = true } = options
+export const useFilterNavigation = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const updateFilter = useCallback(
-    (key: string, value?: string) => {
-      const params = new URLSearchParams(searchParams.toString())
-
-      if (!value) {
-        params.delete(key)
-      } else {
-        params.set(key, value)
+    (value: BlogCategory) => {
+      if (value === BLOG_CATEGORIES.ALL) {
+        router.replace('/')
+        return
       }
 
-      const queryString = params.toString()
-      const newPath = queryString ? `?${queryString}` : ''
-
-      if (replace) {
-        router.replace(newPath)
-      } else {
-        router.push(newPath)
-      }
+      router.replace(`?category=${value}`)
     },
-    [router, searchParams, replace]
+    [router]
   )
 
-  const resetFilters = useCallback(() => {
-    router.replace('')
-  }, [router])
+  const currentFilter =
+    (searchParams.get('category') as BlogCategory) || BLOG_CATEGORIES.ALL
 
   return {
     updateFilter,
-    resetFilters,
-    currentFilters: searchParams,
+    currentFilter,
   }
 }
