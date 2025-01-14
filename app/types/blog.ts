@@ -18,15 +18,15 @@ export interface BlogFrontmatter {
 }
 
 export const BLOG_CATEGORIES = {
-  ALL: 'ALL',
-  FRONTEND: 'FRONTEND',
-  BACKEND: 'BACKEND',
-  CS: 'CS',
-  DEVOPS: 'DEVOPS',
-  CORE: 'CORE',
-  GROWTH: 'GROWTH',
-  RETROSPECT: 'RETROSPECT',
-  LIFE: 'LIFE',
+  ALL: 'all',
+  FRONTEND: 'frontend',
+  BACKEND: 'backend',
+  CS: 'cs',
+  DEVOPS: 'devops',
+  CORE: 'core',
+  GROWTH: 'growth',
+  RETROSPECT: 'retrospect',
+  LIFE: 'life',
 } as const
 
 export type BlogCategory =
