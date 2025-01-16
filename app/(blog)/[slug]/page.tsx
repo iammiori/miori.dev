@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { baseUrl } from '@/sitemap'
 
+import { MDXLayout } from '../components/MdxLayout'
 import { formatDate } from '../utils/date'
 
 import { getBlogPosts } from '@/(blog)/utils/mdx'
@@ -89,17 +90,21 @@ export default async function Blog({ params }) {
           }),
         }}
       />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
-        {post.metadata.title}
-      </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(post.metadata.publishedAt)}
-        </p>
-      </div>
-      <article className="prose">
-        <CustomMDX source={post.content} />
-      </article>
+      <MDXLayout>
+        <header className="mb-12">
+          <h1 className="font-bold text-3xl md:text-4xl tracking-tighter text-gray-800 dark:text-gray-100">
+            {post.metadata.title}
+          </h1>
+          <div className="flex mt-4 text-sm">
+            <p className="text-neutral-600 dark:text-neutral-400">
+              {formatDate(post.metadata.publishedAt)}
+            </p>
+          </div>
+        </header>
+        <article className="prose prose-gray dark:prose-invert">
+          <CustomMDX source={post.content} />
+        </article>
+      </MDXLayout>
     </section>
   )
 }
