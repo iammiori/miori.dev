@@ -1,23 +1,24 @@
-import { RssIcon } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import Image from 'next/image'
 
 interface SocialLinkProps {
   href: string
   icon: React.ReactNode
-  label: string
+  isEmail?: boolean
 }
 
-function SocialLink({ href, icon, label }: SocialLinkProps) {
+function SocialLink({ href, icon, isEmail }: SocialLinkProps) {
   return (
     <li>
       <a
-        className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
-        rel="noopener noreferrer"
-        target="_blank"
+        className="flex items-center text-neutral-600 transition-all hover:scale-125"
+        {...(!isEmail && {
+          rel: 'noopener noreferrer',
+          target: '_blank',
+        })}
         href={href}
       >
         {icon}
-        <p className="ml-2 h-7">{label}</p>
       </a>
     </li>
   )
@@ -30,17 +31,28 @@ const socialLinks = [
       <Image
         src="github-mark.svg"
         alt="GitHub"
-        width={16}
-        height={16}
+        width={20}
+        height={20}
         className="dark:invert"
       />
     ),
-    label: 'GitHub',
   },
   {
-    href: '/rss',
-    icon: <RssIcon size={16} />,
-    label: 'RSS',
+    href: 'https://www.linkedin.com/in/miyeon-lee-a4868723a/',
+    icon: (
+      <Image
+        src="linkedin-mark.svg"
+        alt="Linkedin"
+        width={20}
+        height={20}
+        className="dark:invert"
+      />
+    ),
+  },
+  {
+    href: 'mailto:immioriii@gmail.com',
+    icon: <Mail size={20} className="text-neutral-800 dark:text-neutral-200" />,
+    isEmail: true,
   },
 ]
 
@@ -48,13 +60,13 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mb-4">
-      <ul className="font-sm mt-8 flex flex-col space-x-0 space-y-2 text-neutral-600 md:flex-row md:space-x-4 md:space-y-0 dark:text-neutral-300">
+    <footer className="mb-4 flex flex-col items-center justify-center">
+      <ul className="font-sm mt-8 flex flex-row space-x-4 text-neutral-600 dark:text-neutral-300">
         {socialLinks.map((link) => (
           <SocialLink key={link.href} {...link} />
         ))}
       </ul>
-      <p className="mt-4 text-neutral-600 dark:text-neutral-300">
+      <p className="mt-2 text-neutral-600 dark:text-neutral-300">
         © {currentYear} miori
       </p>
     </footer>
