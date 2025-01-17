@@ -5,7 +5,6 @@ import { ProfileSection } from './components/ProfileSection'
 export default function Page() {
   return (
     <section>
-      <h1 className="mb-8 text-2xl font-semibold tracking-tighter">About Me</h1>
       <div className="max-w-4xl mx-auto p-6 space-y-12">
         <ProfileSection
           name={'miori (이미연)'}
