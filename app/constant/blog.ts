@@ -1,20 +1,16 @@
-import { LucideIcon, Quote, Shapes } from 'lucide-react'
 import {
-  Database,
   Binary,
-  Settings,
-  Compass,
-  Sprout,
   BookOpen,
+  Compass,
+  Database,
   Layers,
+  Quote,
+  Settings,
+  Shapes,
+  Sprout,
 } from 'lucide-react'
 
-import { BlogCategory, BLOG_CATEGORIES } from '@/types/blog'
-
-interface CategoryMetadata {
-  label: string
-  icon?: LucideIcon
-}
+import { BLOG_CATEGORIES, BlogCategory, CategoryMetadata } from '@/types/blog'
 
 export const CATEGORY_METADATA: Record<BlogCategory, CategoryMetadata> = {
   [BLOG_CATEGORIES.ALL]: {
