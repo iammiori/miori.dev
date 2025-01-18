@@ -1,21 +1,4 @@
-export interface BlogMetadata {
-  title: string
-  publishedAt: string
-  summary: string
-  image?: string
-  category?: string
-}
-
-export interface BlogPost {
-  metadata: BlogMetadata
-  slug: string
-  content: string
-}
-
-export interface BlogFrontmatter {
-  metadata: Partial<BlogMetadata>
-  content: string
-}
+import { LucideIcon } from 'lucide-react'
 
 export const BLOG_CATEGORIES = {
   ALL: 'all',
@@ -34,6 +17,19 @@ export type BlogCategory =
 
 export interface CategoryMetadata {
   label: string
-  description: string
-  icon?: string
+  icon?: LucideIcon
+}
+
+export interface BlogMetadata {
+  title: string
+  publishedAt: string
+  summary: string
+  image?: string
+  category: BlogCategory
+}
+
+export interface BlogPost {
+  metadata: BlogMetadata
+  slug: string
+  content: string
 }
