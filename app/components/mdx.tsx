@@ -4,6 +4,8 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import React from 'react'
 import { highlight } from 'sugar-high'
 
+import { slugify } from '@/lib/blog'
+
 function Table({ data }) {
   const headers = data.headers.map((header, index) => (
     <th key={index}>{header}</th>
@@ -51,17 +53,6 @@ function RoundedImage(props) {
 function Code({ children, ...props }) {
   const codeHTML = highlight(children)
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
-}
-
-function slugify(str) {
-  return str
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/&/g, '-and-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
 }
 
 function createHeading(level) {
