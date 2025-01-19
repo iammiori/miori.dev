@@ -86,7 +86,9 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto min-h-screen flex flex-col pt-16 md:pt-20">
               <div className="flex flex-col flex-1 px-4 sm:px-8 md:px-12 lg:px-8">
                 <div className="flex-1">{children}</div>
-                <Footer />
+                <div className="mt-12 md:mt-16 lg:mt-20">
+                  <Footer />
+                </div>
               </div>
             </div>
           </main>
