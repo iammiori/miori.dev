@@ -1,3 +1,4 @@
+import { Tag } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
 import { baseUrl } from '@/sitemap'
@@ -106,6 +107,16 @@ export default async function Blog({ params }) {
           <article className="prose prose-gray dark:prose-invert">
             <CustomMDX source={post.content} />
           </article>
+          {post.metadata.category && (
+            <div className="pt-8 mt-8 border-t border-neutral-200 dark:border-neutral-700">
+              <div className="flex items-center space-x-2">
+                <Tag className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                <span className="text-neutral-700 dark:text-neutral-200 text-sm">
+                  {post.metadata.category}
+                </span>
+              </div>
+            </div>
+          )}
         </MDXLayout>
         <TableOfContents content={post.content} />
       </div>
