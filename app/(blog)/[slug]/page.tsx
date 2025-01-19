@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { baseUrl } from '@/sitemap'
 
 import { MDXLayout } from '../components/MdxLayout'
+import { TableOfContents } from '../components/TableOfContent'
 import { formatDate } from '../utils/date'
 
 import { getBlogPosts } from '@/(blog)/utils/mdx'
@@ -90,21 +91,24 @@ export default async function Blog({ params }) {
           }),
         }}
       />
-      <MDXLayout>
-        <header className="mb-12">
-          <h1 className="font-bold text-3xl md:text-4xl tracking-tighter text-gray-800 dark:text-gray-100">
-            {post.metadata.title}
-          </h1>
-          <div className="flex mt-4 text-sm">
-            <p className="text-neutral-600 dark:text-neutral-400">
-              {formatDate(post.metadata.publishedAt)}
-            </p>
-          </div>
-        </header>
-        <article className="prose prose-gray dark:prose-invert">
-          <CustomMDX source={post.content} />
-        </article>
-      </MDXLayout>
+      <div className="flex">
+        <MDXLayout>
+          <header className="mb-12">
+            <h1 className="font-bold text-3xl md:text-4xl tracking-tighter text-gray-800 dark:text-gray-100">
+              {post.metadata.title}
+            </h1>
+            <div className="flex mt-4 text-sm">
+              <p className="text-neutral-600 dark:text-neutral-400">
+                {formatDate(post.metadata.publishedAt)}
+              </p>
+            </div>
+          </header>
+          <article className="prose prose-gray dark:prose-invert">
+            <CustomMDX source={post.content} />
+          </article>
+        </MDXLayout>
+        <TableOfContents content={post.content} />
+      </div>
     </section>
   )
 }
