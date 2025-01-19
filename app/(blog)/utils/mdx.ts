@@ -3,7 +3,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { BlogMetadata } from '@/types/blog'
+import { BLOG_CATEGORIES, BlogCategory, BlogMetadata } from '@/types/blog'
 
 const parseFrontmatter = async (fileContent: string) => {
   const frontmatterRegex = /---\s*([\s\S]*?)\s*---/
@@ -27,7 +27,12 @@ const parseFrontmatter = async (fileContent: string) => {
     metadata[key.trim()] = value
   })
 
-  const requiredFields = ['title', 'publishedAt'] as const
+  const requiredFields = [
+    'title',
+    'publishedAt',
+    'summary',
+    'category',
+  ] as const
   const missingFields = requiredFields.filter((field) => !metadata[field])
 
   if (missingFields.length > 0) {
@@ -36,11 +41,18 @@ const parseFrontmatter = async (fileContent: string) => {
     )
   }
 
+  if (
+    !Object.values(BLOG_CATEGORIES).includes(metadata.category as BlogCategory)
+  ) {
+    throw new Error(`Invalid category: ${metadata.category}`)
+  }
+
   const validatedMetadata: BlogMetadata = {
     title: metadata.title,
     publishedAt: metadata.publishedAt,
     summary: metadata.summary,
-    ...(metadata.image && { image: metadata.image }),
+    category: metadata.category as BlogCategory,
+    image: metadata.image,
   }
 
   return { metadata: validatedMetadata, content }

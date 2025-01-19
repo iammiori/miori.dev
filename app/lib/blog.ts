@@ -17,12 +17,14 @@ export const getAllCategories = (): BlogCategory[] => {
 }
 
 export const slugify = (str: string) => {
-  return str
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w가-힣-]/g, '')
-    .replace(/--+/g, '-')
-    .replace(/^-+|-+$/g, '')
+  return encodeURIComponent(
+    str
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w가-힣-]/g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-+|-+$/g, '')
+  )
 }
