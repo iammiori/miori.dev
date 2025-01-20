@@ -38,7 +38,15 @@
 - 📝 MDX 블로그 포스팅 
 - 💅 shadcn/ui 기반 컴포넌트
 - ✨ Framer Motion 스크롤 애니메이션
-  
+- 💎 giscus (반응, 댓글 by GitHub)
+
+
+### 🚀 Deployment
+GitHub Actions를 통해 자동으로 Vercel에 배포
+- main 브랜치 푸시: Production 환경 배포
+- 기타 브랜치 푸시: Preview 환경 배포
+
+
 ### 🛠️ Installation & Run
 ```bash
 # 패키지 설치
