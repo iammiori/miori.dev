@@ -1,4 +1,3 @@
-// components/Navbar.tsx
 'use client'
 
 import { SunMedium, MoonStar } from 'lucide-react'
@@ -46,9 +45,10 @@ export function Navbar({ className }: NavbarProps) {
                   href={path}
                   className={cn(
                     'transition-all hover:text-neutral-800 dark:hover:text-neutral-200',
-                    'flex align-middle relative py-1 px-2 m-1',
+                    'flex align-middle relative py-2 px-3 m-1',
+                    'font-medium',
                     isActive
-                      ? 'text-neutral-800 dark:text-neutral-200 font-medium'
+                      ? 'text-neutral-800 dark:text-neutral-200 font-semibold'
                       : 'text-neutral-600 dark:text-neutral-400',
                     isActive
                       ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-neutral-800 dark:after:bg-neutral-200'
