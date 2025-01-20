@@ -38,6 +38,7 @@
 - 📝 MDX 블로그 포스팅 
 - 💅 shadcn/ui 기반 컴포넌트
 - ✨ Framer Motion 스크롤 애니메이션
+- 💎 giscus (반응, 댓글 by GitHub)
   
 ### 🛠️ Installation & Run
 ```bash
