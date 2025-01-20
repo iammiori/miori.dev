@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 
 import { baseUrl } from '@/sitemap'
 
+import Comments from '../components/GiscusSection'
 import { MDXLayout } from '../components/MdxLayout'
 import { TableOfContents } from '../components/TableOfContent'
 import { formatDate } from '../utils/date'
@@ -107,6 +108,7 @@ export default async function Blog({ params }) {
           <article className="prose prose-gray dark:prose-invert">
             <CustomMDX source={post.content} />
           </article>
+
           {post.metadata.category && (
             <div className="pt-8 mt-8 border-t border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center space-x-2">
@@ -117,6 +119,10 @@ export default async function Blog({ params }) {
               </div>
             </div>
           )}
+
+          <div className="mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-700">
+            <Comments />
+          </div>
         </MDXLayout>
         <TableOfContents content={post.content} />
       </div>
