@@ -4,14 +4,14 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   pull_request:
-    branches-ignore:
-      - main
-      
+    types: [opened, synchronize, reopened]
 jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       
       - name: Create GitHub deployment
         id: deployment
@@ -21,7 +21,7 @@ jobs:
             const { data: deployment } = await github.rest.repos.createDeployment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: context.sha,
+              ref: context.payload.pull_request.head.sha,
               environment: 'Preview',
               auto_merge: false,
               required_contexts: []
@@ -52,7 +52,6 @@ jobs:
         run: |
           URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "DEPLOY_URL=$URL" >> $GITHUB_ENV
-      
       
       - name: Update deployment status
         if: always()
