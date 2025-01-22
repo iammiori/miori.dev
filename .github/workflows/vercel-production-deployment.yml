@@ -26,9 +26,10 @@ jobs:
       - name: Trigger Vercel Deploy Hook
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(curl -X POST ${{ secrets.VERCEL_DEPLOY_HOOK_URL }})
+          RESPONSE=$(curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}")
+          DEPLOYMENT_URL=$(echo $RESPONSE | jq -r '.url')
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-
+          
       - name: Update Deployment Status
         uses: chrnorm/deployment-status@v2
         with:
