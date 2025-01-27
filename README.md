@@ -46,6 +46,11 @@ GitHub Actions를 통해 자동으로 Vercel에 배포
 - main 브랜치 푸시: Production 환경 배포
 - 기타 브랜치 푸시: Preview 환경 배포
 
+### 🧪 Test Code
+`Jest + React Testing Library`
+- 블로그의 핵심 기능을 안정적으로 유지
+- 새로운 기능 추가나 리팩토링 시 빠른 피드백
+
 
 ### 🛠️ Installation & Run
 ```bash
