@@ -13,14 +13,18 @@ import { CustomMDX } from '@/components/mdx'
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts()
-
   return posts.map((post) => ({
     slug: post.slug,
   }))
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const posts = await getBlogPosts()
+
   const post = posts.find((post) => post.slug === params.slug)
 
   if (!post) {
@@ -33,8 +37,9 @@ export async function generateMetadata({ params }) {
     summary: description,
     image,
   } = post.metadata
+
   const ogImage = image
-    ? image
+    ? `${baseUrl}${image}`
     : `${baseUrl}/og?title=${encodeURIComponent(title)}`
 
   return {
@@ -46,11 +51,7 @@ export async function generateMetadata({ params }) {
       type: 'article',
       publishedTime,
       url: `${baseUrl}/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
+      images: [{ url: ogImage }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -61,12 +62,30 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function Blog({ params }) {
+export default async function Blog({ params }: { params: { slug: string } }) {
   const posts = await getBlogPosts()
   const post = posts.find((post) => post.slug === params.slug)
 
   if (!post) {
     notFound()
+  }
+
+  // Schema.org JSON-LD data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.metadata.title,
+    datePublished: post.metadata.publishedAt,
+    dateModified: post.metadata.publishedAt,
+    description: post.metadata.summary,
+    image: post.metadata.image
+      ? `${baseUrl}${post.metadata.image}` // baseUrl 추가
+      : `${baseUrl}/og?title=${encodeURIComponent(post.metadata.title)}`,
+    url: `${baseUrl}/${post.slug}`,
+    author: {
+      '@type': 'Person',
+      name: 'miori',
+    },
   }
 
   return (
@@ -75,22 +94,7 @@ export default async function Blog({ params }) {
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
-            description: post.metadata.summary,
-            image: post.metadata.image
-              ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
-            url: `${baseUrl}/${post.slug}`,
-            author: {
-              '@type': 'Person',
-              name: 'miori',
-            },
-          }),
+          __html: JSON.stringify(jsonLd),
         }}
       />
       <div className="flex">

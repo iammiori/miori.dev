@@ -11,9 +11,12 @@ interface Props {
 }
 
 const isVisible = (element: HTMLElement | null, offset = 0) => {
-  if (!element) return false
+  if (!element) {
+    return false
+  }
   const { top, bottom } = element.getBoundingClientRect()
   const viewportHeight = window.innerHeight
+
   return top < viewportHeight && bottom > offset
 }
 
@@ -33,7 +36,9 @@ export function TableOfContents({ content }: Props) {
       .filter((line) => line.match(/^#{1,4}\s/))
       .map((line) => {
         const match = line.match(/^(#{1,4})\s+(.+)$/)
-        if (!match) return null
+        if (!match) {
+          return null
+        }
         const level = match[1].length
         const text = match[2].replace(/`/g, '').trim()
         const id = slugify(text)
@@ -46,7 +51,9 @@ export function TableOfContents({ content }: Props) {
   }, [content])
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') {
+      return
+    }
 
     const initialHash = window.location.hash
 
@@ -56,7 +63,15 @@ export function TableOfContents({ content }: Props) {
 
       if (heading) {
         setIgnoreScrollEvent(true)
-        heading.scrollIntoView({ behavior: 'smooth' })
+        const offset = 80 // handleClick과 동일한 offset 사용
+        const elementTop = heading.getBoundingClientRect().top
+        const offsetPosition = window.scrollY + elementTop - offset
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        })
+
         setTimeout(() => {
           setActiveId(hash)
           setIgnoreScrollEvent(false)
@@ -67,12 +82,14 @@ export function TableOfContents({ content }: Props) {
     }
 
     const handleScroll = () => {
-      if (ignoreScrollEvent) return
+      if (ignoreScrollEvent) {
+        return
+      }
 
       const scrollY = window.scrollY
       const viewportHeight = window.innerHeight
       const pageHeight = document.documentElement.scrollHeight
-      const offset = 100
+      const offset = 80
 
       const isBottom = scrollY + viewportHeight >= pageHeight - 10
       if (isBottom) {
@@ -118,7 +135,9 @@ export function TableOfContents({ content }: Props) {
     }
   }
 
-  if (headings.length === 0) return null
+  if (headings.length === 0) {
+    return null
+  }
 
   return (
     <div className="hidden xl:block w-[280px] ml-10">

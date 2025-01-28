@@ -16,10 +16,10 @@ export const getAllCategories = (): BlogCategory[] => {
   return Object.values(BLOG_CATEGORIES)
 }
 
-export const slugify = (str: string) => {
+export const slugify = (str: string | number | boolean) => {
+  const strValue = String(str)
   return encodeURIComponent(
-    str
-      .toString()
+    strValue
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-')

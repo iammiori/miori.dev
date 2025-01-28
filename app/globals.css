@@ -26,15 +26,16 @@
     --radius: 0.5rem;
 
     /* 코드 하이라이팅 기본 테마 */
+
     --sh-class: #2d5e9d;
     --sh-identifier: #354150;
     --sh-sign: #8996a3;
-    --sh-string: #007f7a;
-    --sh-keyword: #e02518;
-    --sh-comment: #a19595;
+    --sh-property: #0550ae;
+    --sh-entity: #249a97;
     --sh-jsxliterals: #6266d1;
-    --sh-property: #e25a1c;
-    --sh-entity: #e25a1c;
+    --sh-string: #00a99a;
+    --sh-keyword: #f47067;
+    --sh-comment: #a19595;
   }
 
   .dark {
@@ -141,38 +142,6 @@ html {
   code {
     @apply px-1 py-0.5 rounded-lg;
     @apply text-gray-900 dark:text-gray-100;
-
-    /* 코드 하이라이팅 스타일 통합 */
-    .sh__token {
-      color: var(--sh-identifier) !important;
-    }
-    .sh__keyword {
-      color: var(--sh-keyword) !important;
-    }
-    .sh__string {
-      color: var(--sh-string) !important;
-    }
-    .sh__function {
-      color: var(--sh-class) !important;
-    }
-    .sh__number {
-      color: var(--sh-class) !important;
-    }
-    .sh__operator {
-      color: var(--sh-sign) !important;
-    }
-    .sh__punctuation {
-      color: var(--sh-sign) !important;
-    }
-    .sh__property {
-      color: var(--sh-property) !important;
-    }
-    .sh__variable {
-      color: var(--sh-entity) !important;
-    }
-    .sh__comment {
-      color: var(--sh-comment) !important;
-    }
   }
 
   code span {
