@@ -1,14 +1,13 @@
 import {
   MOCK_CATEGORY_METADATA,
   MOCK_BLOG_CATEGORIES,
-} from '__mocks__/blog-constants'
-
+} from '@/__mocks__/blog-constants'
 import {
   getCategoryLabel,
   getCategoryIcon,
   getAllCategories,
   slugify,
-} from '../blog'
+} from '@/lib/blog'
 
 jest.mock('@/constant/blog', () => ({
   CATEGORY_METADATA: MOCK_CATEGORY_METADATA,
