@@ -1,4 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use clinet'
+
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import { ComponentProps } from 'react'
+import rehypePrettyCode from 'rehype-pretty-code'
 
 import { Blockquote } from './Blockquote'
 import { Code } from './Code'
@@ -17,13 +22,29 @@ const components = {
   h6: createHeading(6),
   Image: RoundedImage,
   a: CustomLink,
-  code: Code,
+  pre: Pre,
+  code: ({ children, ...props }: any) => {
+    const isBlockCode = !!props['data-language']
+    if (isBlockCode) {
+      return <Code {...props}>{children}</Code>
+    }
+
+    return (
+      <code
+        {...props}
+        className="inline-block rounded bg-gray-200 px-1 py-0.5 text-sm dark:bg-gray-700"
+      >
+        {children}
+      </code>
+    )
+  },
   Table,
   blockquote: Blockquote,
-  pre: Pre,
 }
 
-export function CustomMDX(props) {
+type Props = ComponentProps<typeof MDXRemote>
+
+export function CustomMDX(props: Props) {
   return (
     <MDXRemote
       {...props}
@@ -31,8 +52,18 @@ export function CustomMDX(props) {
       options={{
         parseFrontmatter: true,
         mdxOptions: {
-          remarkPlugins: [],
-          rehypePlugins: [],
+          rehypePlugins: [
+            [
+              rehypePrettyCode as any,
+              {
+                theme: 'one-dark-pro',
+                keepBackground: false,
+                defaultLang: {
+                  block: 'plaintext',
+                },
+              },
+            ],
+          ],
         },
       }}
     />
