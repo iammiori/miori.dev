@@ -2,7 +2,7 @@ export function Table({ data }) {
   const headers = data.headers.map((header, index) => (
     <th
       key={index}
-      className="px-6 py-4 text-left text-sm font-bold tracking-wider text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 uppercase"
+      className="px-6 py-4 text-left text-sm font-bold tracking-wider text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
     >
       {header}
     </th>
