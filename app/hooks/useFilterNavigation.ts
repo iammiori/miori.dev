@@ -19,8 +19,17 @@ export const useFilterNavigation = () => {
     [router]
   )
 
-  const currentFilter =
-    (searchParams.get('category') as BlogCategory) || BLOG_CATEGORIES.ALL
+  const isValidCategory = (
+    category: string | null
+  ): category is BlogCategory => {
+    if (!category) return false
+    return Object.values(BLOG_CATEGORIES).includes(category as BlogCategory)
+  }
+
+  const urlCategory = searchParams.get('category')
+  const currentFilter = isValidCategory(urlCategory)
+    ? urlCategory
+    : BLOG_CATEGORIES.ALL
 
   return {
     updateFilter,
