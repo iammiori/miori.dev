@@ -8,6 +8,21 @@ export function Table({ data }) {
     </th>
   ))
 
+  const renderCell = (content: React.ReactNode) => {
+    if (typeof content === 'string') {
+      if (content.startsWith('`') && content.endsWith('`')) {
+        return (
+          <code className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 font-mono text-sm">
+            {content.slice(1, -1)}
+          </code>
+        )
+      }
+      return content
+    }
+
+    return content
+  }
+
   const rows = data.rows.map((row, index) => (
     <tr
       key={index}
@@ -21,7 +36,7 @@ export function Table({ data }) {
           key={cellIndex}
           className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words"
         >
-          {cell}
+          {renderCell(cell)}
         </td>
       ))}
     </tr>
