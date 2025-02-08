@@ -26,8 +26,11 @@ export function Code({
           )}
         </div>
 
-        <div className="p-4 bg-gray-100 dark:bg-zinc-900">
-          <code {...props} className={cn('grid', className)}>
+        <div className="p-4 bg-gray-100 dark:bg-zinc-900 overflow-x-auto">
+          <code
+            {...props}
+            className={cn('grid whitespace-pre', className)} // whitespace-pre 추가
+          >
             {children}
           </code>
         </div>
