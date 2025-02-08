@@ -1,0 +1,279 @@
+---
+title: PropsWithChildren vs ReactNode
+publishedAt: '2025-02-08'
+summary: PropsWithChildren, ReactNode 차이를 알아보고, 언제 왜 써야하는지 알아보기
+category: frontend
+image: /images/blogs/0002/title.png
+---
+
+# PropsWithChildren vs. ReactNode
+
+<b>고민의 배경</b>
+
+> 사내에서 요구사항을 구현 중 WrapperComponent를 사용한 적이 있습니다.<br/>
+> 코드리뷰 과정에서 `children: ReactNode` 로 작성하였던 부분을 `PropsWithChildren` 으로 쓰는게 더 좋다는 리뷰를 받았습니다.<br/>
+> 언제 어떤걸 왜 써야하지? 라는 궁금증이 생기게 되었습니다.
+
+이 글에서는 두 가지 방식의 차이점과 어떤 상황에 무엇을 사용하면 좋을지를 적어볼까 합니다.
+
+## 1. PropsWithChildren의 탄생 배경
+
+### PropsWithChildren이 없었을 때
+
+```typescript
+// 초기에는 이렇게 써야 했다고 합니다.
+interface ComponentProps {
+  children: ReactNode;
+  // 다른 props...
+}
+
+const Component: FC<ComponentProps> = ({ children }) => {
+  return <div>{children}</div>;
+};
+```
+
+### 발생했던 문제들
+
+1. **타입 정의의 반복**
+
+   👉 children을 받는 모든 컴포넌트마다 children: ReactNode를 계속 반복해서 써야 했답니다.
+
+   ```typescript
+   // 카드 컴포넌트
+   interface CardProps {
+     title: string
+     children: ReactNode // 여기서 children 정의
+   }
+   // 레이아웃 컴포넌트
+   interface LayoutProps {
+     width: number
+     children: ReactNode // 또 children 정의
+   }
+   // 버튼 컴포넌트
+   interface ButtonProps {
+     onClick: () => void
+     children: ReactNode // 또또 children 정의
+   }
+   ```
+
+2. **일관성 부족**
+
+   👉 의도된 거라면 크게 문제가 없겠지만, 성향 차이라면 다음과 같은 문제가 발생할 수 있을 것 같습니다.
+
+   - 컴포넌트 사용 시 일관되지 않은 동작으로 인한 혼란
+   - 타입 체크의 엄격성이 컴포넌트마다 달라짐
+
+   ```typescript
+   // 어떤 개발자는 이렇게 작성
+   interface Card1Props {
+     children: ReactNode // 필수로 받음
+   }
+
+   // 다른 개발자는 이렇게 작성
+   interface Card2Props {
+     children?: ReactNode // Optional로 받음
+   }
+
+   // 또 다른 개발자는 이렇게 작성
+   interface Card3Props {
+     children: ReactNode | null // null도 받을 수 있게
+   }
+   ```
+
+3. **제네릭 컴포넌트와의 호환성**
+
+   👉 제네릭을 사용할 때마다 children 타입을 추가로 정의해야 했었답니다.
+
+   ```typescript
+   // 데이터 목록을 보여주는 컴포넌트
+   interface ListProps<T> {
+     items: T[]
+     children: ReactNode // 제네릭 타입과 함께 쓸 때마다
+     onSelect: (item: T) => void
+   }
+
+   // 데이터 상세를 보여주는 컴포넌트
+   interface DetailProps<T> {
+     data: T
+     children: ReactNode // children 정의를 반복
+     onSave: (data: T) => void
+   }
+   ```
+
+### PropsWithChildren의 도입
+
+```typescript
+// PropsWithChildren의 실제 구현
+type PropsWithChildren<P = unknown> = P & { children?: ReactNode | undefined }
+
+// 사용 예시
+type CardProps = PropsWithChildren<{
+  title: string
+}>
+```
+
+👍 PropsWithChildren을 사용한 이후로, children 타입을 매번 정의할 필요 없이, 일관되고 깔끔하게 작성할 수 있게 되었습니다!
+
+## 2. 각각 언제 써야 할까?
+
+### PropsWithChildren을 사용해야 하는 경우
+
+1. **Wrapper 컴포넌트**
+
+   ```typescript
+   type LayoutProps = PropsWithChildren<{
+     maxWidth?: number;
+   }>;
+
+   const Layout = ({ children, maxWidth }: LayoutProps) => (
+     <div style={{ maxWidth }}>
+       {children}
+    </div>
+   );
+   ```
+
+   - 왜?
+     - 컴포넌트의 주 목적이 children을 감싸는 것임을 명시적으로 표현
+
+2. **단일 children 슬롯**
+   ```typescript
+   type CardProps = PropsWithChildren<{
+     title: string
+   }>
+   ```
+   - 왜?
+     - 가장 일반적인 React 패턴을 표현하는 데 최적화됨
+
+### ReactNode를 사용해야 하는 경우
+
+1. **다중 콘텐츠 슬롯**
+
+   ```typescript
+   type ModalProps = {
+     header: ReactNode
+     content: ReactNode
+     footer?: ReactNode
+   }
+   ```
+
+   - 왜?
+     - 여러 개의 독립적인 콘텐츠 영역을 명확하게 정의할 수 있음
+
+## 3. 타입 시스템 관점에서의 차이
+
+### TypeScript 타입 정의 비교
+
+<Table
+  data={{
+    headers: ['특성', 'PropsWithChildren', 'ReactNode'],
+    rows: [
+      [
+        '타입 정의',
+        '`type PropsWithChildren<P = unknown> = P & { children?: ReactNode }`',
+        '`type ReactNode = ReactElement | string | number | Iterable<ReactNode> | ReactPortal | boolean | null | undefined`',
+      ],
+      ['용도', 'props 타입 정의', '렌더링 가능한 모든 것을 표현'],
+      ['Nullability', 'children이 항상 optional', '명시적으로 지정 필요'],
+      ['제네릭 지원', '기본적으로 제네릭', '단일 타입'],
+      ['타입 추론', '더 정확한 Props 타입 추론', '범용적인 렌더링 타입'],
+    ],
+  }}
+/>
+
+### 실제 차이점 예시
+
+```typescript
+// PropsWithChildren
+type CardProps = PropsWithChildren<{
+  title: string
+}>
+// 결과 타입:
+// {
+//   title: string;
+//   children?: ReactNode | undefined;
+// }
+
+// ReactNode
+type CardProps = {
+  title: string
+  children: ReactNode // 명시적으로 required로 지정됨
+}
+```
+
+## 4. TypeScript 관련 주요 포인트
+
+### 타입 안정성
+
+```typescript
+// PropsWithChildren은 타입 안정성이 더 높음
+type SafeProps = PropsWithChildren<{
+  onClick: () => void;
+}>;
+
+// 실수로 잘못된 타입을 지정하기 어려움
+const Safe = ({ children, onClick }: SafeProps) => {
+  return (
+    <div onClick={onClick}>
+      {children /* 항상 ReactNode 타입 */}
+    </div>
+  );
+};
+```
+
+### 유니온 타입과의 상호작용
+
+- children을 별도로 정의하고 유니온 타입과 결합해야 합니다
+
+```typescript
+// PropsWithChildren with unions
+type Props = PropsWithChildren<
+  | { variant: 'primary'; color: string }
+  | { variant: 'secondary'; backgroundColor: string }
+>
+
+// ReactNode with unions
+type Props = {
+  children: ReactNode
+} & (
+  | { variant: 'primary'; color: string }
+  | { variant: 'secondary'; backgroundColor: string }
+)
+```
+
+## 결론
+
+1. **PropsWithChildren 사용 시나리오**
+
+   - 단일 children 슬롯이 필요한 경우
+   - Wrapper 컴포넌트를 만들 때
+   - 제네릭 컴포넌트에서 props와 children을 함께 다룰 때
+
+2. **ReactNode 사용 시나리오**
+   - 여러 개의 독립적인 콘텐츠 영역이 필요할 때
+   - 특정 prop이 렌더링 가능한 모든 것을 받아야 할 때
+
+<br />
+
+---
+
+<br />
+
+선택의 기준은 단순히 "children을 받느냐 마느냐"가 아니라, 컴포넌트의 목적과 사용
+패턴을 고려해야 된다고 생각합니다.
+
+`PropsWithChildren`은 React의 기본적인 합성 모델을 따르는 컴포넌트에 적합하고,
+`ReactNode`는 더 유연한 콘텐츠 구성이 필요할 때 적합하다고 생각합니다.
+
+이는 컴포넌트의 의도를 명확히 전달하고, 코드의 일관성을 유지하며, 장기적인 관점에서 유지보수성을 높이는 데 실질적인 도움이 되지 않을까요?
+
+<br />
+<br />
+
+<Image
+  src="/images/blogs/cat-selfie.jpg"
+  alt="cat-selfie"
+  width={400}
+  height={300}
+  center
+  caption="귀여운 냥이 😺 로 이번글을 마무리하겠습니다. ㅎㅎ"
+/>
