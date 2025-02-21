@@ -30,8 +30,7 @@ export const siteConfig = {
     'blog',
   ],
   socials: {
-    github: 'https://github.com/your-github-username',
-    twitter: 'https://twitter.com/your-twitter-handle',
+    github: 'https://github.com/iammiori',
   },
 }
 

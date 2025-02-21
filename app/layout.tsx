@@ -6,6 +6,7 @@ import { GeistSans } from 'geist/font/sans'
 
 import { baseUrl } from '@/sitemap'
 
+import { WebsiteJsonLd } from './components/website-jsonld'
 import { siteConfig } from './config/site'
 
 import type { Metadata } from 'next'
@@ -73,6 +74,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <WebsiteJsonLd />
         <script
           key="theme-script"
           dangerouslySetInnerHTML={{
