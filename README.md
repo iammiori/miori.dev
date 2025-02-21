@@ -1,7 +1,7 @@
 # miori.dev
 
 개발 경험과 기술적 인사이트를 공유하는 개인 기술 블로그예요.<br/>
-🔗 [techblog.iammiori.com](techblog.iammiori.com)
+🔗 [techblog.iammiori.com](https://techblog.iammiori.com/)
 
 ### 🚀 Tech Stack
 ```
