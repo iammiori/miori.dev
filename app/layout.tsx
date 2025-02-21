@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.title}`,
   },
   description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author.name, url: baseUrl }],
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },
