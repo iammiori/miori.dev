@@ -11,7 +11,7 @@ export default function Page() {
           bio={
             '문제의 본질을 고민하고 효율적인 가치를 만들고 싶은 프론트엔드 엔지니어'
           }
-          avatarUrl={'/icon.png'}
+          avatarUrl={'/miori.jpg'}
         />
         <InsightsSection />
         <AboutBlogSection />
