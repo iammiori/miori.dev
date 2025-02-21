@@ -8,10 +8,10 @@ import { sortByDate } from '../utils/date'
 import { Card } from '@/components/card'
 import { useFilterNavigation } from '@/hooks/useFilterNavigation'
 import { getCategoryLabel } from '@/lib/blog'
-import { BLOG_CATEGORIES, BlogPost } from '@/types/blog'
+import { BLOG_CATEGORIES, BlogPostMetadata } from '@/types/blog'
 
 interface Props {
-  posts: BlogPost[]
+  posts: BlogPostMetadata[]
 }
 
 export function FilteredBlogPosts({ posts }: Props) {

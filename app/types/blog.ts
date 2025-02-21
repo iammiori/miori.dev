@@ -33,3 +33,5 @@ export interface BlogPost {
   slug: string
   content: string
 }
+
+export type BlogPostMetadata = Omit<BlogPost, 'content'>

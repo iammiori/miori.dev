@@ -3,7 +3,12 @@
 import fs from 'fs'
 import path from 'path'
 
-import { BLOG_CATEGORIES, BlogCategory, BlogMetadata } from '@/types/blog'
+import {
+  BLOG_CATEGORIES,
+  BlogCategory,
+  BlogMetadata,
+  BlogPostMetadata,
+} from '@/types/blog'
 
 const parseFrontmatter = async (fileContent: string) => {
   const frontmatterRegex = /---\s*([\s\S]*?)\s*---/
@@ -85,4 +90,25 @@ const getMDXData = async (dir: string) => {
 
 export async function getBlogPosts() {
   return getMDXData(path.join(process.cwd(), 'app', '(blog)', 'posts'))
+}
+
+export async function getBlogPostsMetadata(): Promise<BlogPostMetadata[]> {
+  const mdxFiles = await getMDXFiles(
+    path.join(process.cwd(), 'app', '(blog)', 'posts')
+  )
+
+  return Promise.all(
+    mdxFiles.map(async (file) => {
+      const filePath = path.join(process.cwd(), 'app', '(blog)', 'posts', file)
+      const rawContent = fs.readFileSync(filePath, 'utf-8')
+
+      const { metadata } = await parseFrontmatter(rawContent)
+      const slug = path.basename(file, path.extname(file))
+
+      return {
+        metadata,
+        slug,
+      }
+    })
+  )
 }
