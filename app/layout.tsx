@@ -6,6 +6,7 @@ import { GeistSans } from 'geist/font/sans'
 
 import { baseUrl } from '@/sitemap'
 
+import { WebsiteJsonLd } from './components/website-jsonld'
 import { siteConfig } from './config/site'
 
 import type { Metadata } from 'next'
@@ -22,6 +23,8 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.title}`,
   },
   description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author.name, url: baseUrl }],
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },
@@ -71,6 +74,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <WebsiteJsonLd />
         <script
           key="theme-script"
           dangerouslySetInnerHTML={{
