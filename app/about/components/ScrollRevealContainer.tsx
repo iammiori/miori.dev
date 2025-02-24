@@ -10,9 +10,9 @@ export default function ScrollRevealContainer({ children, delay = 0 }) {
   return (
     <div ref={ref}>
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-        transition={{ duration: 0.6, delay }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+        transition={{ duration: 0.4, delay }}
       >
         {children}
       </motion.div>
