@@ -89,6 +89,10 @@ export default function RootLayout({
             __html: getThemeScript(),
           }}
         />
+        <meta
+          name="google-site-verification"
+          content="4fQqzOmSxlzOHj1YK4dyxM851woj4dr5wYumsZE3Wqs"
+        />
       </head>
       <body>
         <div className="min-h-screen flex flex-col">
