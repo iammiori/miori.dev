@@ -25,6 +25,14 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   authors: [{ name: siteConfig.author.name, url: baseUrl }],
+  creator: siteConfig.author.name,
+  publisher: siteConfig.author.name,
+  alternates: {
+    canonical: baseUrl,
+    types: {
+      'application/rss+xml': `${baseUrl}/rss.xml`,
+    },
+  },
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },
@@ -80,6 +88,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: getThemeScript(),
           }}
+        />
+        <meta
+          name="google-site-verification"
+          content="4fQqzOmSxlzOHj1YK4dyxM851woj4dr5wYumsZE3Wqs"
         />
       </head>
       <body>
