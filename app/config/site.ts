@@ -28,6 +28,7 @@ export const siteConfig = {
     'miori',
     '이미연',
     'blog',
+    '기술 블로그',
   ],
   socials: {
     github: 'https://github.com/iammiori',

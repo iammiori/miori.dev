@@ -23,7 +23,12 @@ export function WebsiteJsonLd() {
       '@type': 'Person',
       name: siteConfig.author.name,
       url: baseUrl,
+      sameAs: [
+        'https://github.com/iammiori',
+        'https://www.linkedin.com/in/miyeon-lee-a4868723a/',
+      ],
     },
+    inLanguage: 'ko-KR',
   }
 
   return (
