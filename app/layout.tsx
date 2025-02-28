@@ -25,6 +25,14 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   authors: [{ name: siteConfig.author.name, url: baseUrl }],
+  creator: siteConfig.author.name,
+  publisher: siteConfig.author.name,
+  alternates: {
+    canonical: baseUrl,
+    types: {
+      'application/rss+xml': `${baseUrl}/rss.xml`,
+    },
+  },
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },

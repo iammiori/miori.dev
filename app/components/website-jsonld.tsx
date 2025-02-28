@@ -14,6 +14,16 @@ export function WebsiteJsonLd() {
       target: `${baseUrl}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
+    publisher: {
+      '@type': 'Person',
+      name: siteConfig.author.name,
+      url: baseUrl,
+    },
+    author: {
+      '@type': 'Person',
+      name: siteConfig.author.name,
+      url: baseUrl,
+    },
   }
 
   return (

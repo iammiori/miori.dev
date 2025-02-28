@@ -10,6 +10,9 @@ import { formatDate } from '../utils/date'
 
 import { getBlogPosts } from '@/(blog)/utils/mdx'
 import { CustomMDX } from '@/components/mdx'
+import { siteConfig } from '@/config/site'
+import { getCategoryLabel } from '@/lib/blog'
+import { BlogCategory } from '@/types/blog'
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts()
@@ -36,15 +39,25 @@ export async function generateMetadata({
     publishedAt: publishedTime,
     summary: description,
     image,
+    category,
   } = post.metadata
 
   const ogImage = image
     ? `${baseUrl}${image}`
     : `${baseUrl}/og?title=${encodeURIComponent(title)}`
 
+  const categoryLabel = getCategoryLabel(category as BlogCategory)
+
   return {
     title,
     description,
+    keywords: [
+      ...siteConfig.keywords,
+      category,
+      categoryLabel,
+      ...title.split(' ').filter((word) => word.length > 1),
+    ],
+    authors: [{ name: siteConfig.author.name }],
     openGraph: {
       title,
       description,
