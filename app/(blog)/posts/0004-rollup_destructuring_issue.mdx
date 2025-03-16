@@ -1,0 +1,60 @@
+---
+title: Vite Rollup의 destructuring(구조분해) 이슈
+publishedAt: '2025-03-16'
+summary: Vite와 Rollup 번들러를 사용하면서 발생한 객체 구조분해(destructuring) 이슈에 관한 기록입니다. 이슈의 원인 분석과 문제 해결을 위해 시도한 다양한 접근 방법 및 최종 해결책을 상세히 공유합니다.
+category: frontend
+image: /images/blogs/0003/thumbnail.png
+---
+
+> 글의 코드는 원본코드가 아닌, 최대한 비슷하게 재현한 코드들입니다.
+
+# 이슈 상황
+
+최근 QA 중, 프로덕션 환경에서 안정적으로 운영되어 온 기초 데이터 수정 API에서 오류가 발생하는 문제가 발견되었습니다.<br/>
+아래와 같은 오류가 발생하였습니다.
+
+`"message": "notNull Violation: xxx cannot be null"`
+
+## 상세 상황
+
+수정 API의 특정 필드들은 변경 불가능 항목으로, 프론트 측에서 요청 시 제외하고 보내는 것으로 합의되었습니다. 원래 의도대로라면, 해당 필드들은 요청에서 완전히 제거해 전송했어야 합니다. 그리고 이는 local 환경에서는 제거 되어 잘 전송되었습니다.<br/>
+그러나 빌드 후 환경에서는 어떤 이유에서인지 해당 필드들이 `null` 값으로 전송되었고, 이는 백엔드 API의 데이터베이스 제약 조건에 위배되는 상황을 초래했습니다.
+
+## 기존 코드
+
+```typescript
+type UserProfile = {
+  username: string
+  email: string
+  age: number
+  address: string
+  phoneNumber: string
+  creditCardNumber?: string | null
+}
+
+type ProfileUpdateReq = Omit<UserProfile, 'username' | 'age'>
+
+const onSubmit: (data: UserProfile) => {
+  if (!isEditing) {
+    // 등록 로직 ..
+  } else {
+    // 구조분해로 수정 불가 항목 제외
+    const { username, age, ...rest } = data
+    editUser(rest)
+  }
+}
+```
+
+# 오류 원인 찾기
+
+## 모든 걸 의심해보자
+
+- 프론트엔드 빌드 이슈 (Vite/Rollup 구조분해 관련)
+- 백엔드 validation 이슈
+
+프론트엔드와 백엔드 모두 기술 스택 전환이라는 격변의 시기를 겪고 있습니다. 프론트엔드에서는 모노레포 도입과 Vite migration을 진행했으며, 백엔드에서는 `Express`에서 `Next.js`로의 점진적인 migration을 진행 중입니다.<br/>
+프론트엔드 관점에서 분석해보면, local 환경에서는 의도대로 작동하지만 빌드 이후에만 구조분해할당으로 제외되어야 할 값들이 포함되는 상황이 발생했습니다. 이는 bundler 관련 이슈를 의심할 수 있는 근거였습니다.<br/>
+
+다만, 해당 API의 NestJS migration은 프론트엔드 Vite migration보다 이후에 진행되었기 때문에, 그 사이 기간 동안은 정상 작동했을 것으로 추측됩니다.
+
+특히, 백엔드 API의 유효성 검증 로직이 `yup`에서 `NestJS Class-Validator`로 변경되면서, 기존에는 허용되었던 `null` 값에 대한 검증이 엄격해졌고, 결과적으로 오류가 발생하게 되었습니다.
