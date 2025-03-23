@@ -1,24 +1,35 @@
 ---
-title: Vite Rollup의 destructuring(구조분해) 이슈
+title: Rollup의 destructuring(구조분해) 이슈
 publishedAt: '2025-03-16'
-summary: Vite와 Rollup 번들러를 사용하면서 발생한 객체 구조분해(destructuring) 이슈에 관한 기록입니다. 이슈의 원인 분석과 문제 해결을 위해 시도한 다양한 접근 방법 및 최종 해결책을 상세히 공유합니다.
+summary: Rollup 번들러를 사용하면서 발생한 객체 구조분해(destructuring) 이슈에 관한 기록입니다. rollup의 버전 이슈임을 파악하는 과정과 해결하는 과정을 담았습니다.
 category: frontend
-image: /images/blogs/0003/thumbnail.png
+image: /images/blogs/0004/thumbnail.png
 ---
 
 > 글의 코드는 원본코드가 아닌, 최대한 비슷하게 재현한 코드들입니다.
 
-# 이슈 상황
+**요약**
 
-최근 QA 중, 프로덕션 환경에서 안정적으로 운영되어 온 기초 데이터 수정 API에서 오류가 발생하는 문제가 발견되었습니다.<br/>
-아래와 같은 오류가 발생하였습니다.
+> 1. 개발 환경(Esbuild)과 프로덕션 환경(Rollup)의 동작 차이로 인해 구조분해할당이 의도대로 작동하지 않음.
+> 2. `Rollup 4.34.0` 버전에서 발생한 Tree Shaking 버그로 인해 `rest` 객체에 제외된 값이 `null`로 포함됨.
+> 3. `npm update rollup`을 실행하여 `4.34.4` 이후로 업데이트하면 해결됨.
+
+# Vite Rollup의 destructuring(구조분해) 이슈
+
+최근 QA 중, 프로덕션 환경에서 안정적으로 운영되어 온 기초 데이터 수정 API에서 오류가 발생했습니다.<br/>
+오류 메시지는 다음과 같았습니다:
 
 `"message": "notNull Violation: xxx cannot be null"`
 
 ## 상세 상황
 
-수정 API의 특정 필드들은 변경 불가능 항목으로, 프론트 측에서 요청 시 제외하고 보내는 것으로 합의되었습니다. 원래 의도대로라면, 해당 필드들은 요청에서 완전히 제거해 전송했어야 합니다. 그리고 이는 local 환경에서는 제거 되어 잘 전송되었습니다.<br/>
-그러나 빌드 후 환경에서는 어떤 이유에서인지 해당 필드들이 `null` 값으로 전송되었고, 이는 백엔드 API의 데이터베이스 제약 조건에 위배되는 상황을 초래했습니다.
+수정 API는 특정 필드를 변경 불가능 항목으로 정의하고, 프론트엔드에서 요청 시 이러한 필드를 제외하기로 백엔드와 합의한 상태였습니다. local 환경에서는 의도대로 제외된 상태로 요청이 전송되었고, 문제없이 동작했습니다.<br/>
+그러나 빌드 후 배포된 환경에서는 제외되어야 할 필드들이 `null` 값으로 포함되어 전송되었고, 이는 백엔드의 데이터베이스 제약 조건(NOT NULL)을 위반하며 오류를 유발했습니다.
+
+이 상황은 다음과 같은 의문을 불러일으켰습니다:
+
+- 왜 로컬 환경에서는 정상적으로 작동했는데, 빌드 후에는 다르게 동작했을까?
+- 구조분해 할당이 제대로 작동하지 않은 이유는 무엇일까?
 
 ## 기존 코드
 
@@ -45,16 +56,191 @@ const onSubmit: (data: UserProfile) => {
 }
 ```
 
+여기서 핵심은 `const { username, age, ...rest } = data` 구문입니다. 이 구문은 ECMAScript 2018에서 공식화된 객체 구조분해 할당([🔗reference](https://ko.javascript.info/destructuring-assignment#ref-279))을 활용해 username과 age를 제외한 나머지 속성만 rest 객체에 담아 전송하려는 의도였습니다. 로컬 환경에서는 이 코드가 의도대로 작동했지만, 빌드 후에는 rest에 username과 age가 null로 포함되는 문제가 발생했습니다.
+
 # 오류 원인 찾기
 
-## 모든 걸 의심해보자
+## 의심 대상
 
-- 프론트엔드 빌드 이슈 (Vite/Rollup 구조분해 관련)
-- 백엔드 validation 이슈
+문제의 원인을 좁히기 위해 다음 두 가지 가능성을 검토했습니다:
 
-프론트엔드와 백엔드 모두 기술 스택 전환이라는 격변의 시기를 겪고 있습니다. 프론트엔드에서는 모노레포 도입과 Vite migration을 진행했으며, 백엔드에서는 `Express`에서 `Next.js`로의 점진적인 migration을 진행 중입니다.<br/>
-프론트엔드 관점에서 분석해보면, local 환경에서는 의도대로 작동하지만 빌드 이후에만 구조분해할당으로 제외되어야 할 값들이 포함되는 상황이 발생했습니다. 이는 bundler 관련 이슈를 의심할 수 있는 근거였습니다.<br/>
+- 프론트엔드 빌드 이슈: Vite와 Rollup의 구조분해 처리 방식에서 발생한 문제.
+- 백엔드 유효성 검증 이슈: 백엔드에서 null 값에 대한 처리 방식이 변경된 경우.
 
-다만, 해당 API의 NestJS migration은 프론트엔드 Vite migration보다 이후에 진행되었기 때문에, 그 사이 기간 동안은 정상 작동했을 것으로 추측됩니다.
+## 기술 스택 전환 타임라인
 
-특히, 백엔드 API의 유효성 검증 로직이 `yup`에서 `NestJS Class-Validator`로 변경되면서, 기존에는 허용되었던 `null` 값에 대한 검증이 엄격해졌고, 결과적으로 오류가 발생하게 되었습니다.
+<Image
+  src="/images/blogs/0004/timeline.png"
+  alt="기술 스택 전환 타임라인"
+  width={500}
+  height={250}
+  center
+  caption="기술 스택 전환 타임라인"
+/>
+
+프론트엔드와 백엔드 모두 기술 스택 전환의 시기를 겪고 있습니다.
+
+- 프론트엔드: 모노레포 도입과 CRA ➡️ Vite migration을 진행.
+- 백엔드: `Express`에서 `Nest.js`로의 점진적인 migration 진행중.<br/>
+
+타임라인을 분석한 결과,
+
+- Vite 마이그레이션은 NestJS 전환보다 먼저 진행됨.
+- NestJS로 전환되기 전까지 해당 API는 정상 작동했음.<br/>
+
+이로 인해 프론트엔드 빌드 과정에서 문제가 발생했을 가능성이 높아 보였습니다. 그러나 백엔드의 유효성 검증 로직이 `yup`에서 `NestJS Class-Validator`로 변경되면서 `null` 값에 대한 검증이 엄격해진 점도 간접적인 원인으로 작용했을 수 있었습니다.<br/>
+하지만 근본적으로 프론트엔드에서 값을 잘못 보내고 있기에, 프론트엔드에서 수정이 이뤄져야 했습니다.
+
+## 프론트엔드 분석: Vite와 Rollup
+
+Vite는 개발 환경과 프로덕션 환경에서 서로 다른 도구를 사용합니다:
+
+- 개발 환경: `Esbuild` 실행 → HMR 제공 -> 구조분해 정상 작동.
+- 빌드 환경: `Rollup`이 코드를 번들링 → 최적화된 결과물을 생성 -> 구조분해 결과가 달라짐.
+
+## 범인은 바로..Rollup
+
+결론적으로, 이슈의 근본 원인은 `Rollup`의 특정 버전(해당 프로젝트의 경우 4.34.0)에서 발생한 구조분해 할당 버그였습니다.
+
+GitHub에서 Rollup의 특정 버전에서 객체 구조분해 할당 시 제외된 속성이 완전히 제거되지 않고 null로 설정되는 버그가 존재한다는 이슈를 찾을 수 있었습니다.([🔗Rollup Issue #5832](https://github.com/rollup/rollup/issues/5832))<br/>
+
+이는 Rollup의 Tree Shaking 또는 코드 변환 과정에서 발생한 문제로 보였습니다.
+
+Vite는 프로덕션 빌드 시 `Rollup`을 사용하므로, `Rollup`의 버그가 빌드 결과물에도 영향을 끼치게 되었습니다.
+이로 인해 local 환경(Esbuild)에서는 속성이 제거되었지만, 빌드 환경(Rollup)에서는 null 값으로 남아 백엔드 오류를 유발하게되었습니다.
+
+# Rollup 코드 분석
+
+[🔗include all properties if a rest element is destructed : 구조분해 할당 이슈 해결 pr](https://github.com/rollup/rollup/pull/5833) 코드를 분석해보겠습니다.
+`const {a, b, ...rest} = data` 에서 ...rest 만 사용한다고 가정해보겠습니다.
+
+## 🛑 bug fix 이전 includeDestructuredIfNecessary (before)
+
+```typescript
+includeDestructuredIfNecessary(
+  context: InclusionContext,
+  destructuredInitPath: ObjectPath,
+  init: ExpressionEntity
+): boolean {
+  let included = false;
+  for (const property of this.properties) {
+    included =
+      property.includeDestructuredIfNecessary(context, destructuredInitPath, init) || included;
+  }
+  return (this.included ||= included);
+}
+```
+
+`ObjectPattern.ts` 의 `includeDestructuredIfNecessary` 의 일부입니다.
+구조 분해 할당의 나머지 요소(...rest)를 특별히 처리하지 않고, 모든 속성을 동일하게 처리하고 있습니다.
+결국, a, b도 참조되었기 때문에 `Rollup`은 이를 제거하지 않고 기본값(null)을 남길 수 도 있습니다.
+
+## ✅ bug fix 된 includeDestructuredIfNecessary
+
+```typescript
+includeDestructuredIfNecessary(
+  context: InclusionContext,
+  destructuredInitPath: ObjectPath,
+  init: ExpressionEntity
+): boolean {
+  if (!this.properties.length) return false;
+
+  // 마지막 속성을 가져오기
+  const lastProperty = this.properties.at(-1)!;
+  const lastPropertyIncluded = lastProperty.includeDestructuredIfNecessary(
+    context,
+    destructuredInitPath,
+    init
+  );
+
+  // 마지막 속성이 rest 요소인지 확인
+  const lastPropertyIsRestElement = lastProperty.type === NodeType.RestElement;
+
+  // rest 요소라면 포함 여부 결정
+  let included = lastPropertyIsRestElement ? lastPropertyIncluded : false;
+
+  // 나머지 속성(`a`, `b`)에 대해 처리
+  for (const property of this.properties.slice(0, -1)) {
+    if (lastPropertyIsRestElement && lastPropertyIncluded) {
+      property.includeNode(context);
+    }
+    included =
+      property.includeDestructuredIfNecessary(context, destructuredInitPath, init) || included;
+  }
+  return (this.included ||= included);
+}
+```
+
+`for문`에서 a, b를 처리 할 때
+
+`if (lastPropertyIsRestElement && lastPropertyIncluded) { property.includeNode(context); }` 해당 라인에서 rest가 포함되었기 때문에 a, b도 포함 가능성이 있습니다.
+
+하지만, `property.includeDestructuredIfNecessary(...)`가 재귀적으로 실행되면서 a, b가 실제로 사용되지 않으면 제거가 됩니다. <br/>
+
+더 자세히 본다면, a의 참조가 없다면 `a.includeDestructuredIfNecessary(...)` 는 false를 반환 할겁니다. <br/>
+`included = false || false` → `included = false` 이기 때문에 a 는 제거될 수 있습니다.
+
+결과적으로 a, b는 제거되고 rest만 남게될수 있습니다! 🚀
+
+# 해결과정
+
+Vite는 내부적으로 Rollup을 의존성으로 사용합니다. Vite를 설치하면 Rollup도 함께 의존성으로 설치되며, 이는 `package-lock.json`에 기록됩니다.
+
+[🔗해결된 버전 : 4.34.4](https://github.com/rollup/rollup/releases/tag/v4.34.4) 으로 업데이트가 필요했습니다.
+
+<Image
+  src="/images/blogs/0004/rollup-version.png"
+  alt="Do not tree-shake properties if a rest element is used in destructuring"
+  width={500}
+  height={250}
+  center
+  caption="객체 구조분해 할당 rest 이슈가 해결 된 버전 4.34.4 release"
+/>
+
+## 해결책: npm update
+
+`package-lock.json`에서 `Rollup`의 버전이 `^4.34.0`로 지정되어 있었습니다. Semantic Versioning에 따르면, `^`는 마이너 버전까지 자동 업데이트를 허용합니다.<br/>
+release 를 보고 최신까지 올려도 크게 문제가 없을것 같아, 합의 후 다음과 같이 `Rollup`을 업데이트했습니다:
+
+```bash
+npm update rollup
+```
+
+업데이트 후 빌드를 다시 수행하고 테스트한 결과, rest 객체에서 username과 age가 null로 포함되지 않고 완전히 제외되었습니다. <br/>
+당연히, 백엔드 API 요청도 정상적으로 처리되었고, 오류가 해결되었습니다. 😌
+
+## 또 다른 해결책 : omit
+
+```typescript
+const { a, b, ...rest } = allInput
+const newRest = omit(allInput, ['a', 'b'])
+```
+
+lodash의 omit 을 사용하여, 조금더 제거를 명시적으로 표현할 수도 있습니다.
+
+# 결론
+
+이번 이슈를 통해 프론트엔드 빌드 도구의 내부 작동 방식이 실제 프로덕션 환경에서 예상치 못한 버그를 일으킬 수 있다는 점을 배웠습니다.
+객체 구조분해 할당과 같은 ECMAScript의 기능이 트랜스파일러와 번들러에 의해 어떻게 처리되는지 이해하는 것도 안정적인 애플리케이션 개발에 중요한 요소임을 알게 되었습니다.
+
+마지막으로, 오픈 소스 커뮤니티의 소중함을 느꼈습니다. Rollup의 GitHub 이슈와 PR을 통해 문제의 원인을 파악하고 해결책을 찾을 수 있었기 때문입니다.<br/>
+
+# 배운 점
+
+- <b>개발 환경과 프로덕션 환경의 차이 이해</b>
+  <br />- Vite가 개발 환경에서는 Esbuild를, 프로덕션 환경에서는 Rollup을
+  사용하기 때문에 발생할 수 있는 동작 차이에 대한 인식할 수 있습니다.
+- <b>의존성 이해하기</b>
+  <br />
+  -`package-lock.json`을 통해 전체 의존성 트리를 이해하게 되었습니다.
+  <br />
+- <b>Semantic Versioning 이해하기</b>
+  <br />- `^`, `~` 등의 버전 지정자가 어떻게 작동하는지 이해하여, 호환성관리를
+  할 수 있게 되었습니다.
+
+<br />
+<br />
+
+<b>회고 겸 PROBLEM & TRY</b>
+
+의존성 관리에 크게 신경을 안쓰고 있었었다. 의존성 관리 전략(package.json의 overrides, resolutions 옵션)에 대해 더 공부해봐야겠다.
