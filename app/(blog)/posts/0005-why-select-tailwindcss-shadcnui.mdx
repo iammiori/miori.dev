@@ -1,0 +1,165 @@
+---
+title: 브라우저 렌더링부터 SSR까지, tailwindcss + shadcn/ui 선택의 이유 (+ DX)
+publishedAt: '2025-03-29'
+summary: NEXT.js 로 만들어진 프로젝트의 CSS 스타일링을 위해 tailwindcss와 shadcn/ui를 선택한 이유를 브라우저 렌더링부터 SSR까지의 과정을 통해 설명합니다.
+category: frontend
+image: /images/blogs/0005/thumbnail.png
+---
+
+**요약**
+
+> 1. Next.js + MUI + tailwindcss 의 조합의 프로젝트를 Next.js + tailwindcss + shadcn/ui 로 변경한 이유에 대해 설명합니다.
+> 2. 브라우저 렌더링부터 SSR까지의 최적화 관점에서 스타일링 방식을 비교합니다.
+> 3. 최신 제로 런타임 CSS-in-JS에 대해 알아봅니다.
+
+---
+
+<br />
+- Material UI 는 `MUI` 로 축약해서 작성하겠습니다.
+<br />
+---
+<br />
+
+<b>고민의 배경</b>
+
+최근 사내 Next.js 기반 랜딩페이지 프로젝트의 추가 개발을 맡게 되었습니다. 처음 코드베이스를 접했을 때, Material UI와 tailwindcss가 혼합되어 사용되고 있어 당황스러웠습니다.🫢<br/>
+
+```tsx
+<Box
+  sx={{ padding: 2, marginBottom: 3 }}
+  className="flex flex-col md:flex-row gap-4 hover:bg-gray-50"
+>
+  <Typography variant="h6" className="text-blue-600 font-bold">
+    이거는 예시코드 입니다
+  </Typography>
+</Box>
+```
+
+MUI의 `sx` props와 tailwindcss 클래스가 컴포넌트 내에서 함께 사용되는 것을 보고, 스타일링 방식의 불일치로 인한 문제가 발생할 수 있다는 생각이 들었습니다.
+
+- MUI의 CSS-in-JS 스타일과 tailwindcss 클래스 간의 우선순위가 명확하지 않아 예상치 못한 스타일 충돌이 발생할 수 있습니다.
+- 스타일 코드베이스의 일관성이 떨어져 유지보수가 어려워집니다.
+- SSR 환경에서 MUI는 스타일을 서버에서 생성하고 클라이언트로 전달한 뒤, Hydration 과정에서 다시 적용합니다. 이 과정에서 추가적인 스타일 계산이 발생하여 초기 로딩 성능이 저하될 수 있습니다.
+
+이 글에서 두 가지 다른 스타일링 패러다임이 공존하기 어려운 이유와 이를 tailwindcss와 shadcn/ui의 조합으로 변경하기로 결정한 과정을 공유하고, Next.js 프로젝트에 최적화된 스타일링 전략에 대해 적어보려 합니다.
+
+<br />
+
+# CSS 스타일링 방식의 이해
+
+CSS 스타일링 방식은 크게 정적 스타일링과 동적 스타일링으로 나눌 수 있습니다.
+
+## 정적 스타일링
+
+빌드 시점에 스타일을 미리 생성하고, 런타임에는 생성된 스타일을 적용합니다. 브라우저는 미리 생성된 css 를 빠르게 적용할 수 있기 때문에 렌더링 성능이 뛰어납니다.<br/>
+FOUC(Flash of Unstyled Content)를 방지할 수 있어 사용자 경험을 향상시킬 수 있습니다.<br/>
+
+## 동적 스타일링
+
+런타임에 JavaScript를 사용하여 스타일을 동적으로 생성하고 적용합니다. <br/>
+JavaScript의 동적인 기능을 활용해 유연한 스타일링이 가능하나, 런타임에 스타일을 계산하기 때문에 FOUC가 발생할 수 있습니다.
+
+<br />
+
+# 브라우저 렌더링 최적화: 정적 스타일링의 중요성 (CSR, SSR 관점)
+
+- **HTML 파싱**
+
+  - 브라우저는 HTML 파일을 파싱하여 DOM 트리를 생성합니다.
+
+- **CSS 파싱**
+
+  - 브라우저는 CSS 파일을 파싱하여 CSSOM 트리를 생성합니다.
+
+- **렌더 트리 생성**
+
+  - DOM 트리와 CSSOM 트리를 결합하여 렌더 트리를 생성합니다. 렌더 트리는 화면에 표시될 요소와 스타일 정보를 포함합니다.
+
+- **Layout**
+
+  - 렌더 트리를 기반으로 각 요소의 위치와 크기를 계산합니다.
+
+- **Paint**
+
+  - 계산된 레이아웃을 기반으로 각 요소를 화면에 그립니다.
+
+- **Composite**
+
+  - 여러 레이어를 합성하여 최종 화면을 표시합니다.
+
+## 정적 스타일링(ex: tailwindcss)의 렌더링 과정
+
+tailwindcss는 **빌드 시점**에 모든 스타일을 미리 생성하여 최적화된 CSS 파일로 제공합니다.
+브라우저는 HTML 파싱과 동시에 CSS 파일을 다운로드하고 파싱할 수 있어 렌더링 성능이 향상됩니다.
+
+결과적으로 초기 페이지 로딩 속도가 향상되고, 스타일이 적용되지 않은 콘텐츠가 잠시 보이는 FOUC 문제가 최소화됩니다.
+
+## 동적 스타일링(ex: CSS-in-JS)의 렌더링 과정
+
+반면, CSS-in-JS는 **런타임**에 JavaScript를 사용하여 스타일을 동적으로 생성합니다.
+복잡한 스타일 계산이 필요한 경우, 렌더 트리 생성이 지연되고 레이아웃 및 페인트 과정에서 성능 저하가 발생할 수 있습니다.
+
+<Image
+  src="/images/blogs/0005/browser-rendering-diagram.svg"
+  alt="browser-rendering-diagram-with-css"
+  width={700}
+  height={350}
+  center
+  caption="브라우저 렌더링 과정과 스타일링 방식 비교"
+/>
+
+# MUI와 tailwindcss의 궁합
+
+MUI는 컴포넌트 기반 개발과 동적인 UI를 효과적으로 지원하기 위해 CSS-in-JS라는 동적 스타일링 방식을 채택했습니다.<br/>
+하지만, tailwindcss와 MUI는 스타일링 방식의 차이로 인해 함께 사용하기 어렵습니다.
+
+- **스타일 충돌**
+
+  - MUI의 컴포넌트 스타일은 CSS-in-JS로 정의되어 있으며, tailwindcss의 유틸리티 클래스와 충돌할 수 있습니다.
+
+- **개발 경험 저하**
+
+  - MUI와 tailwindcss를 함께 사용하면 스타일 관리가 복잡해지고, 개발 경험이 저하될 수 있습니다.
+
+# shadcn/ui로 전환한 이유
+
+shadcn/ui는 tailwindcss를 기반으로 하여 일관된 스타일링을 제공하고, 빌드 시점에 최적화된 CSS를 생성해 Next.js의 SSR과 호환됩니다.<br/>
+또한 컴포넌트를 프로젝트에 직접 복사하는 방식으로 자유로운 커스터마이징이 가능하고, TypeScript 지원이 기본으로 내장되어 있어 개발 경험이 크게 향상되었습니다.
+실제로, MUI를 사용할때는 커스텀 타입을 위해 `d.ts` 파일을 작성해야 했지만, shadcn/ui는 TypeScript를 기본적으로 지원하여 타입 정의에 대한 부담을 줄일 수 있었습니다.<br/>
+더불어 내부적으로 Radix UI 컴포넌트를 활용하여 ARIA 표준을 준수한 뛰어난 접근성을 제공하기 때문에 추가 작업 없이도 접근성 표준을 충족 시킬수 있어 DX 측면에서도 큰 장점이 있었습니다.<br/>
+
+## 전환 과정에서의 실제 성능 개선
+
+Lighthouse 측정결과, MUI에서 shadcn/ui로 전환한 후 다음과 같은 실질적인 성능 개선이 있었습니다.
+
+- **FCP(First Contentful Paint)**: 평균 2.1초 → 0.2초 (90.5% 개선)
+- **LCP(Largest Contentful Paint)**: 평균 2.4초 → 2초 (16.7% 개선)
+
+# 제로 런타임 CSS-in-JS: 미래의 대안?
+
+최근에는 vanilla-extract, Panda CSS 같은 제로 런타임 CSS-in-JS 솔루션이 등장하여 동적 스타일링의 장점을 유지하면서 성능 문제를 해결하는 접근법이 주목받고 있습니다.
+
+## 제로 런타임 CSS-in-JS의 특징
+
+- **빌드 타임 추출**: JavaScript로 스타일을 작성하지만, 빌드 과정에서 정적 CSS로 추출됩니다.
+- **개발 경험 유지**: 테마 시스템, 컴포넌트 기반 스타일링 등의 장점을 유지합니다.
+- **런타임 오버헤드 제거**: 브라우저에서 스타일을 계산하는 JavaScript 코드가 없어 성능이 향상됩니다.
+
+# 결론: 최적의 스타일링 전략 선택하기
+
+프론트엔드 스타일링 방식 선택은 기술적 결정을 넘어 사용자 경험과 개발 생산성의 균형점을 찾는 과정입니다. 모든 상황에 완벽한 솔루션은 없으며, 프로젝트 특성에 따라 적합한 접근법을 선택해야 합니다.
+
+- **콘텐츠 중심**: tailwindcss + shadcn/ui
+- **복잡한 동적 앱**: 제로 런타임 CSS-in-JS (vanilla-extract, Panda CSS)
+- **소규모 프로젝트**: CSS 모듈 또는 tailwindcss
+
+# 정리: 지속 가능한 CSS 전략을 선택하기
+
+최근 [🔗styled-components의 maintenance mode 전환](https://opencollective.com/styled-components/updates/thank-you)은 프론트엔드 CSS 생태계의 중대한 변화를 보여줍니다.<br/>
+런타임 CSS-in-JS에서 Panda CSS나 vanilla-extract 같은 제로 런타임 솔루션으로 패러다임이 이동하는 추세처럼 보입니다. 이들은 CSS-in-JS의 개발자 경험을 유지하면서도 빌드 시점에 정적 CSS를 생성하는 방식으로 런타임 오버헤드 문제를 해결합니다.
+
+이러한 변화 속에서 트렌드를 맹목적으로 따르기보다 프로젝트의 본질적 요구사항과 팀의 생산성을 고려한 주체적 선택이 중요하다고 생각합니다.
+
+이번 프로젝트의 경우 단순한 문의사항 폼이 있는 랜딩페이지 였기 때문에. Next.js 기반 프로젝트에서 tailwindcss와 shadcn/ui 조합이 최적의 균형점이었다고 생각합니다.
+
+기술 선택의 핵심은 트렌드를 이해하되 맹신하지 않고, 실제 사용자 경험과 개발 생산성이라는 두 축을 균형 있게 고려하는 데 있다고 생각합니다.

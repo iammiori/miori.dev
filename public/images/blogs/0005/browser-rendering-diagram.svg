@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 850">
+  <!-- 배경 -->
+  <rect width="1100" height="850" fill="#f8f9fa" rx="5" ry="5"/>
+  
+  <!-- 제목 -->
+  <text x="550" y="40" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">브라우저 렌더링 과정</text>
+  
+  <!-- 브라우저 렌더링 과정 섹션 -->
+  <rect x="50" y="70" width="1000" height="320" fill="#e9ecef" rx="5" ry="5"/>
+  <text x="550" y="100" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#333">브라우저 렌더링 과정</text>
+  
+  <!-- 렌더링 단계 박스 -->
+  <rect x="70" y="120" width="120" height="60" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="130" y="155" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">HTML 파싱</text>
+  
+  <rect x="225" y="120" width="120" height="60" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="285" y="155" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">CSS 파싱</text>
+  
+  <rect x="380" y="120" width="160" height="60" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="460" y="155" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">렌더 트리 생성</text>
+  
+  <rect x="575" y="120" width="120" height="60" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="635" y="155" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Layout</text>
+  
+  <rect x="730" y="120" width="120" height="60" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="790" y="155" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Paint</text>
+  
+  <rect x="885" y="120" width="120" height="60" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="945" y="155" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Composite</text>
+  
+  <!-- 화살표 -->
+  <line x1="190" y1="150" x2="225" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="345" y1="150" x2="380" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="540" y1="150" x2="575" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="695" y1="150" x2="730" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="850" y1="150" x2="885" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- 설명 상자 -->
+  <rect x="70" y="200" width="120" height="140" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="130" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">HTML 파싱</text>
+  <text x="130" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">↓</text>
+  <text x="130" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">DOM 트리 생성</text>
+  <rect x="80" y="270" width="100" height="60" fill="#e6f7ff" rx="3" ry="3" stroke="#91d5ff" stroke-width="1"/>
+  <text x="130" y="300" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">DOM 트리</text>
+  <text x="130" y="315" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">(문서 구조)</text>
+  
+  <rect x="225" y="200" width="120" height="140" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="285" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">CSS 파싱</text>
+  <text x="285" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">↓</text>
+  <text x="285" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">CSSOM 트리 생성</text>
+  <rect x="235" y="270" width="100" height="60" fill="#f6ffed" rx="3" ry="3" stroke="#b7eb8f" stroke-width="1"/>
+  <text x="285" y="300" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">CSSOM 트리</text>
+  <text x="285" y="315" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">(스타일 정보)</text>
+  
+  <rect x="380" y="200" width="160" height="140" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="460" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">DOM + CSSOM 결합</text>
+  <text x="460" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">↓</text>
+  <text x="460" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">렌더 트리 생성</text>
+  <rect x="400" y="270" width="120" height="60" fill="#fff7e6" rx="3" ry="3" stroke="#ffd591" stroke-width="1"/>
+  <text x="460" y="300" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">렌더 트리</text>
+  <text x="460" y="315" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">(표시될 요소+스타일)</text>
+  
+  <rect x="575" y="200" width="120" height="140" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="635" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">레이아웃 계산</text>
+  <text x="635" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">↓</text>
+  <text x="635" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">위치/크기 결정</text>
+  <rect x="595" y="270" width="80" height="60" fill="#f9f0ff" rx="3" ry="3" stroke="#d3adf7" stroke-width="1"/>
+  <text x="635" y="300" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">레이아웃 정보</text>
+  <text x="635" y="315" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">(x, y, 너비, 높이)</text>
+  
+  <rect x="730" y="200" width="120" height="140" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="790" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">페인팅 과정</text>
+  <text x="790" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">↓</text>
+  <text x="790" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">픽셀로 변환</text>
+  <rect x="750" y="270" width="80" height="60" fill="#fff2e8" rx="3" ry="3" stroke="#ffbb96" stroke-width="1"/>
+  <text x="790" y="300" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">페인트 기록</text>
+  <text x="790" y="315" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">(색상, 이미지 등)</text>
+  
+  <rect x="885" y="200" width="120" height="140" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="945" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">Composite(합성)</text>
+  <text x="945" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">↓</text>
+  <rect x="905" y="270" width="80" height="60" fill="#f0f5ff" rx="3" ry="3" stroke="#adc6ff" stroke-width="1"/>
+  <text x="945" y="310" font-family="Arial" font-size="10" text-anchor="middle" fill="#333">최종 화면</text>
+  
+  <!-- 정적 스타일링 vs 동적 스타일링 비교 섹션 -->
+  <rect x="50" y="410" width="1000" height="420" fill="#e9ecef" rx="5" ry="5"/>
+  <text x="550" y="440" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#333">정적 스타일링 vs 동적 스타일링(CSS-in-JS) 비교</text>
+  
+  <!-- 정적 스타일링 흐름도 -->
+  <rect x="80" y="470" width="440" height="340" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="300" y="500" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#008000">정적 스타일링 (Tailwind CSS)</text>
+  
+  <rect x="120" y="530" width="360" height="60" fill="#e6f7ff" rx="5" ry="5" stroke="#91d5ff" stroke-width="1"/>
+  <text x="300" y="565" font-family="Arial" font-size="14" text-anchor="middle" fill="#333">빌드 시 모든 스타일 미리 생성</text>
+  
+  <path d="M300,590 L300,620" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <rect x="120" y="620" width="170" height="80" fill="#e6f7ff" rx="5" ry="5" stroke="#91d5ff" stroke-width="1"/>
+  <text x="205" y="650" font-family="Arial" font-size="14" text-anchor="middle" fill="#333">HTML 파싱</text>
+  <text x="205" y="680" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">DOM 트리 생성</text>
+  
+  <rect x="310" y="620" width="170" height="80" fill="#e6f7ff" rx="5" ry="5" stroke="#91d5ff" stroke-width="1"/>
+  <text x="395" y="650" font-family="Arial" font-size="14" text-anchor="middle" fill="#333">CSS 파싱 (병렬)</text>
+  <text x="395" y="680" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">CSSOM 트리 생성</text>
+  
+  <path d="M205,700 L205,730" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M395,700 L395,730" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M205,730 L300,750" stroke="#666" stroke-width="2"/>
+  <path d="M395,730 L300,750" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <rect x="120" y="750" width="360" height="50" fill="#f6ffed" rx="5" ry="5" stroke="#b7eb8f" stroke-width="1"/>
+  <text x="300" y="780" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#008000">빠른 초기 렌더링 + FOUC 방지</text>
+  
+  <!-- 동적 스타일링 흐름도 -->
+  <rect x="580" y="470" width="440" height="340" fill="#fff" rx="5" ry="5" stroke="#ddd" stroke-width="2"/>
+  <text x="800" y="500" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#d63031">동적 스타일링 (CSS-in-JS)</text>
+  
+  <rect x="620" y="530" width="360" height="60" fill="#fff2e8" rx="5" ry="5" stroke="#ffbb96" stroke-width="1"/>
+  <text x="800" y="565" font-family="Arial" font-size="14" text-anchor="middle" fill="#333">런타임에 JavaScript로 스타일 생성</text>
+  
+  <path d="M800,590 L800,620" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <rect x="620" y="620" width="360" height="80" fill="#fff2e8" rx="5" ry="5" stroke="#ffbb96" stroke-width="1"/>
+  <text x="800" y="650" font-family="Arial" font-size="14" text-anchor="middle" fill="#333">HTML 파싱 → JavaScript 실행</text>
+  <text x="800" y="680" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">DOM 트리 생성 후 JavaScript 코드 실행</text>
+  
+  <path d="M800,700 L800,730" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <rect x="620" y="730" width="360" height="70" fill="#fff2e8" rx="5" ry="5" stroke="#ffbb96" stroke-width="1"/>
+  <text x="800" y="755" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#d63031">지연된 렌더링 + FOUC 가능성</text>
+  <text x="800" y="780" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">(초기에 스타일 없이 콘텐츠가 표시될 수 있음)</text>
+  
+  <!-- 화살표 마커 정의 -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#666"/>
+    </marker>
+  </defs>
+</svg>
