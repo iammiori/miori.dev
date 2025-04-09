@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { Switch } from '@/components/ui/switch'
 import { useNavigation } from '@/hooks/useNavigation'
-import useSetThemeMode from '@/hooks/useSetThemeMode'
+import useTheme from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
 
 const navItems = {
@@ -22,7 +22,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ className }: NavbarProps) {
-  const { mode, toggleMode } = useSetThemeMode()
+  const { mode, toggleTheme } = useTheme()
   const { isNavActive } = useNavigation()
 
   return (
@@ -69,7 +69,7 @@ export function Navbar({ className }: NavbarProps) {
             )}
             <Switch
               checked={mode === 'dark'}
-              onCheckedChange={toggleMode}
+              onCheckedChange={toggleTheme}
               className="ml-1"
               aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
             />

@@ -13,7 +13,7 @@ import type { Metadata } from 'next'
 
 import Footer from '@/components/footer'
 import { Navbar } from '@/components/nav'
-import { getThemeScript } from '@/lib/getThemeScript'
+import { getThemeScript } from '@/lib/theme'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
